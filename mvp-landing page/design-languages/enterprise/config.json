@@ -1,0 +1,120 @@
+{
+  "name": "enterprise",
+  "description": "Clean, functional, structured, low-risk professional design",
+  "tokens": {
+    "colors": {
+      "background": "#f8fafc",
+      "foreground": "#0f172a",
+      "primary": "#2563eb",
+      "primaryForeground": "#ffffff",
+      "secondary": "#e2e8f0",
+      "secondaryForeground": "#334155",
+      "muted": "#f1f5f9",
+      "mutedForeground": "#64748b",
+      "accent": "#0891b2",
+      "accentForeground": "#ffffff",
+      "border": "#e2e8f0",
+      "ring": "#2563eb",
+      "destructive": "#dc2626",
+      "destructiveForeground": "#ffffff",
+      "card": "#ffffff",
+      "cardForeground": "#0f172a",
+      "popover": "#ffffff",
+      "popoverForeground": "#0f172a",
+      "success": "#16a34a",
+      "warning": "#ca8a04",
+      "info": "#0284c7"
+    },
+    "borderRadius": {
+      "none": "0",
+      "sm": "0.125rem",
+      "DEFAULT": "0.25rem",
+      "md": "0.375rem",
+      "lg": "0.5rem",
+      "xl": "0.75rem",
+      "full": "9999px"
+    },
+    "spacing": {
+      "0": "0",
+      "1": "0.25rem",
+      "2": "0.5rem",
+      "3": "0.75rem",
+      "4": "1rem",
+      "5": "1.25rem",
+      "6": "1.5rem",
+      "8": "2rem",
+      "10": "2.5rem",
+      "12": "3rem",
+      "16": "4rem",
+      "20": "5rem",
+      "24": "6rem",
+      "32": "8rem"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "sans": ["IBM Plex Sans", "system-ui", "sans-serif"],
+      "serif": ["IBM Plex Serif", "Georgia", "serif"],
+      "mono": ["IBM Plex Mono", "monospace"]
+    },
+    "fontSize": {
+      "xs": ["0.75rem", { "lineHeight": "1rem" }],
+      "sm": ["0.8125rem", { "lineHeight": "1.25rem" }],
+      "base": ["0.875rem", { "lineHeight": "1.5rem" }],
+      "lg": ["0.9375rem", { "lineHeight": "1.5rem" }],
+      "xl": ["1rem", { "lineHeight": "1.5rem" }],
+      "2xl": ["1.125rem", { "lineHeight": "1.5rem" }],
+      "3xl": ["1.25rem", { "lineHeight": "1.75rem" }],
+      "4xl": ["1.5rem", { "lineHeight": "2rem" }],
+      "5xl": ["1.875rem", { "lineHeight": "2.25rem" }],
+      "6xl": ["2.25rem", { "lineHeight": "2.5rem" }],
+      "7xl": ["3rem", { "lineHeight": "1.1" }],
+      "8xl": ["3.75rem", { "lineHeight": "1" }],
+      "9xl": ["4.5rem", { "lineHeight": "1" }]
+    },
+    "fontWeight": {
+      "thin": "300",
+      "light": "300",
+      "normal": "400",
+      "medium": "500",
+      "semibold": "600",
+      "bold": "700",
+      "extrabold": "700",
+      "black": "700"
+    },
+    "letterSpacing": {
+      "tighter": "-0.02em",
+      "tight": "-0.01em",
+      "normal": "0em",
+      "wide": "0.01em",
+      "wider": "0.02em",
+      "widest": "0.05em"
+    }
+  },
+  "effects": {
+    "shadows": {
+      "none": "none",
+      "sm": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+      "DEFAULT": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+      "md": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+      "lg": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+      "xl": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)"
+    },
+    "gradients": {},
+    "blur": {},
+    "transitions": {
+      "DEFAULT": "all 150ms ease-in-out",
+      "fast": "all 100ms ease-in-out",
+      "slow": "all 200ms ease-in-out"
+    }
+  },
+  "layout": {
+    "containerMaxWidth": "1440px",
+    "sectionPadding": "4rem 1.5rem",
+    "gridGap": "1rem",
+    "cardPadding": "1rem",
+    "navbarHeight": "3.5rem",
+    "sidebarWidth": "16rem",
+    "compactSpacing": true
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "name": "brutalism",
+  "description": "Bold typography, strong grid, high contrast, raw and unapologetic layout",
+  "tokens": {
+    "colors": {
+      "background": "#f5f5f0",
+      "foreground": "#000000",
+      "primary": "#000000",
+      "primaryForeground": "#ffffff",
+      "secondary": "#e5e5e0",
+      "secondaryForeground": "#000000",
+      "muted": "#d4d4cf",
+      "mutedForeground": "#404040",
+      "accent": "#ff3300",
+      "accentForeground": "#ffffff",
+      "border": "#000000",
+      "ring": "#ff3300",
+      "destructive": "#dc2626",
+      "destructiveForeground": "#ffffff",
+      "card": "#ffffff",
+      "cardForeground": "#000000",
+      "popover": "#ffffff",
+      "popoverForeground": "#000000",
+      "highlight": "#ffff00"
+    },
+    "borderRadius": {
+      "none": "0",
+      "sm": "0",
+      "DEFAULT": "0",
+      "md": "0",
+      "lg": "0",
+      "xl": "0",
+      "full": "0"
+    },
+    "spacing": {
+      "0": "0",
+      "1": "0.25rem",
+      "2": "0.5rem",
+      "3": "0.75rem",
+      "4": "1rem",
+      "5": "1.25rem",
+      "6": "1.5rem",
+      "8": "2rem",
+      "10": "2.5rem",
+      "12": "3rem",
+      "16": "4rem",
+      "20": "5rem",
+      "24": "6rem",
+      "32": "8rem"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "sans": ["Space Grotesk", "Arial Black", "sans-serif"],
+      "serif": ["Archivo Black", "Impact", "serif"],
+      "mono": ["Space Mono", "Courier New", "monospace"]
+    },
+    "fontSize": {
+      "xs": ["0.75rem", { "lineHeight": "1rem" }],
+      "sm": ["0.875rem", { "lineHeight": "1.1rem" }],
+      "base": ["1rem", { "lineHeight": "1.2rem" }],
+      "lg": ["1.125rem", { "lineHeight": "1.3rem" }],
+      "xl": ["1.25rem", { "lineHeight": "1.3rem" }],
+      "2xl": ["1.5rem", { "lineHeight": "1.2rem" }],
+      "3xl": ["2rem", { "lineHeight": "1.1" }],
+      "4xl": ["2.5rem", { "lineHeight": "1" }],
+      "5xl": ["3.5rem", { "lineHeight": "1" }],
+      "6xl": ["4.5rem", { "lineHeight": "0.95" }],
+      "7xl": ["6rem", { "lineHeight": "0.9" }],
+      "8xl": ["8rem", { "lineHeight": "0.85" }],
+      "9xl": ["10rem", { "lineHeight": "0.8" }]
+    },
+    "fontWeight": {
+      "thin": "700",
+      "light": "700",
+      "normal": "700",
+      "medium": "700",
+      "semibold": "700",
+      "bold": "800",
+      "extrabold": "800",
+      "black": "900"
+    },
+    "letterSpacing": {
+      "tighter": "-0.03em",
+      "tight": "-0.02em",
+      "normal": "0em",
+      "wide": "0.05em",
+      "wider": "0.1em",
+      "widest": "0.2em"
+    }
+  },
+  "effects": {
+    "shadows": {
+      "none": "none",
+      "sm": "4px 4px 0px #000000",
+      "DEFAULT": "6px 6px 0px #000000",
+      "md": "8px 8px 0px #000000",
+      "lg": "12px 12px 0px #000000",
+      "xl": "16px 16px 0px #000000",
+      "offset": "4px 4px 0px"
+    },
+    "gradients": {},
+    "blur": {},
+    "transitions": {
+      "DEFAULT": "all 0ms",
+      "fast": "all 0ms",
+      "slow": "all 100ms"
+    }
+  },
+  "layout": {
+    "containerMaxWidth": "1400px",
+    "sectionPadding": "6rem 0",
+    "gridGap": "0",
+    "cardPadding": "1.5rem",
+    "navbarHeight": "4rem",
+    "borderWidth": "2px",
+    "solidBorders": true
+  }
+}

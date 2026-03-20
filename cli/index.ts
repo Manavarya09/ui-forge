@@ -2,6 +2,7 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
+import inquirer from 'inquirer';
 import { logger } from '../utils/logger.js';
 import { generator } from '../engine/generator.js';
 import { registry, aiManager } from '../engine/registry.js';
@@ -26,9 +27,9 @@ program
 ╚══════════════════════════════════════════════════════════════╝
 
   Quick Start:
-    npx uiforge create saas my-app
-    npx uiforge create saas my-app --ai
-    npx uiforge preview
+    npx uiforge create                    # Interactive selection
+    npx uiforge create saas my-app       # Direct creation
+    npx uiforge create --interactive      # Interactive mode
 `)
   .version('1.0.0');
 
@@ -72,7 +73,7 @@ program
   });
 
 program
-  .command('create <template>')
+  .command('create [template]')
   .description('Generate a full UI system from a template')
   .option('-n, --name <name>', 'Project name', 'my-app')
   .option('-o, --output <dir>', 'Output directory', '.')
@@ -82,20 +83,80 @@ program
   .option('--install', 'Auto-install dependencies', false)
   .option('--color <hex>', 'Primary color (hex)', '')
   .option('--font <font>', 'Google Font name', '')
-  .action(async (template, options) => {
+  .option('-i, --interactive', 'Interactive template selection', false)
+  .action(async (templateArg, options) => {
     logger.logo();
     
+    let selectedTemplate = templateArg;
+    
     try {
-      const templateExists = registry.exists(template);
+      if (!selectedTemplate || options.interactive) {
+        const templates = registry.list();
+        
+        const templateChoices = templates.map((t, i) => ({
+          name: `${chalk.hex((t as any).color || '#6366f1')(t.name)} - ${t.description.substring(0, 40)}...`,
+          value: t.id,
+          short: t.name,
+        }));
+
+        const answers = await inquirer.prompt([
+          {
+            type: 'list',
+            name: 'template',
+            message: '✨ Select a template:',
+            choices: templateChoices,
+            pageSize: 12,
+          },
+          {
+            type: 'input',
+            name: 'projectName',
+            message: '📁 Project name:',
+            default: options.name || 'my-app',
+            validate: (input: string) => {
+              if (!input.trim()) return 'Project name cannot be empty';
+              if (!/^[a-z0-9-]+$/.test(input)) return 'Use lowercase letters, numbers, and hyphens only';
+              return true;
+            },
+          },
+          {
+            type: 'confirm',
+            name: 'useAI',
+            message: '🤖 Enable AI-powered copy generation?',
+            default: false,
+          },
+          {
+            type: 'confirm',
+            name: 'initGit',
+            message: '📚 Initialize git repository?',
+            default: false,
+          },
+          {
+            type: 'confirm',
+            name: 'installDeps',
+            message: '📦 Install dependencies automatically?',
+            default: true,
+          },
+        ]);
+
+        selectedTemplate = answers.template;
+        options.name = answers.projectName;
+        options.ai = answers.useAI;
+        options.git = answers.initGit;
+        options.install = answers.installDeps;
+        
+        console.log();
+      }
+
+      const templateExists = registry.exists(selectedTemplate!);
       if (!templateExists) {
         logger.errorBox(
           'Template Not Found',
-          `Template "${template}" does not exist.\nRun "uiforge list" to see available templates.`
+          `Template "${selectedTemplate}" does not exist.\nRun "uiforge list" to see available templates.`
         );
         process.exit(1);
       }
 
-      const templateData = registry.get(template)!;
+      const templateData = registry.get(selectedTemplate!)!;
       console.log();
       console.log(`  ${chalk.cyan('📦')} Template: ${chalk.white(templateData.name)}`);
       console.log(`  ${chalk.cyan('📁')} Output:  ${chalk.white(path.resolve(options.output, options.name))}`);
@@ -138,7 +199,7 @@ program
 
       await generator.createTemplate({
         projectName: options.name,
-        template,
+        template: selectedTemplate!,
         outputDir: options.output,
         sections: options.sections,
         useAI: options.ai,

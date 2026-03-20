@@ -1,0 +1,133 @@
+{
+  "name": "glass",
+  "description": "Frosted glass panels, soft transparency, blurred backgrounds, layered depth",
+  "tokens": {
+    "colors": {
+      "background": "rgba(255, 255, 255, 0.1)",
+      "backgroundSolid": "#1a1a2e",
+      "foreground": "#ffffff",
+      "primary": "#8b5cf6",
+      "primaryForeground": "#ffffff",
+      "secondary": "rgba(255, 255, 255, 0.15)",
+      "secondaryForeground": "#e0e0e0",
+      "muted": "rgba(255, 255, 255, 0.08)",
+      "mutedForeground": "#a0a0a0",
+      "accent": "#06b6d4",
+      "accentForeground": "#ffffff",
+      "border": "rgba(255, 255, 255, 0.2)",
+      "ring": "#8b5cf6",
+      "destructive": "#ef4444",
+      "destructiveForeground": "#ffffff",
+      "card": "rgba(255, 255, 255, 0.08)",
+      "cardForeground": "#ffffff",
+      "popover": "rgba(30, 30, 50, 0.9)",
+      "popoverForeground": "#ffffff",
+      "glassTint": "rgba(255, 255, 255, 0.05)"
+    },
+    "borderRadius": {
+      "none": "0",
+      "sm": "0.5rem",
+      "DEFAULT": "1rem",
+      "md": "1.25rem",
+      "lg": "1.5rem",
+      "xl": "2rem",
+      "full": "9999px"
+    },
+    "spacing": {
+      "0": "0",
+      "1": "0.25rem",
+      "2": "0.5rem",
+      "3": "0.75rem",
+      "4": "1rem",
+      "5": "1.25rem",
+      "6": "1.5rem",
+      "8": "2rem",
+      "10": "2.5rem",
+      "12": "3rem",
+      "16": "4rem",
+      "20": "5rem",
+      "24": "6rem",
+      "32": "8rem"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "sans": ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+      "serif": ["Cormorant Garamond", "serif"],
+      "mono": ["Fira Code", "monospace"]
+    },
+    "fontSize": {
+      "xs": ["0.75rem", { "lineHeight": "1rem" }],
+      "sm": ["0.875rem", { "lineHeight": "1.25rem" }],
+      "base": ["1rem", { "lineHeight": "1.5rem" }],
+      "lg": ["1.125rem", { "lineHeight": "1.75rem" }],
+      "xl": ["1.25rem", { "lineHeight": "1.75rem" }],
+      "2xl": ["1.5rem", { "lineHeight": "2rem" }],
+      "3xl": ["1.875rem", { "lineHeight": "2.25rem" }],
+      "4xl": ["2.25rem", { "lineHeight": "2.5rem" }],
+      "5xl": ["3rem", { "lineHeight": "1.1" }],
+      "6xl": ["3.75rem", { "lineHeight": "1" }],
+      "7xl": ["4.5rem", { "lineHeight": "1" }],
+      "8xl": ["6rem", { "lineHeight": "1" }],
+      "9xl": ["8rem", { "lineHeight": "1" }]
+    },
+    "fontWeight": {
+      "thin": "100",
+      "light": "300",
+      "normal": "400",
+      "medium": "500",
+      "semibold": "600",
+      "bold": "700",
+      "extrabold": "800",
+      "black": "900"
+    },
+    "letterSpacing": {
+      "tighter": "-0.05em",
+      "tight": "-0.025em",
+      "normal": "0em",
+      "wide": "0.025em",
+      "wider": "0.05em",
+      "widest": "0.1em"
+    }
+  },
+  "effects": {
+    "shadows": {
+      "none": "none",
+      "sm": "0 4px 12px rgba(0, 0, 0, 0.15)",
+      "DEFAULT": "0 8px 24px rgba(0, 0, 0, 0.2)",
+      "md": "0 12px 32px rgba(0, 0, 0, 0.25)",
+      "lg": "0 20px 48px rgba(0, 0, 0, 0.3)",
+      "xl": "0 32px 64px rgba(0, 0, 0, 0.35)"
+    },
+    "gradients": {
+      "primary": "linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)",
+      "background": "linear-gradient(180deg, rgba(26, 26, 46, 0.8) 0%, rgba(15, 15, 35, 0.95) 100%)",
+      "card": "linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)",
+      "glow": "radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%)"
+    },
+    "blur": {
+      "sm": "8px",
+      "DEFAULT": "16px",
+      "md": "24px",
+      "lg": "40px",
+      "xl": "64px"
+    },
+    "transitions": {
+      "DEFAULT": "all 300ms cubic-bezier(0.4, 0, 0.2, 1)",
+      "fast": "all 150ms cubic-bezier(0.4, 0, 0.2, 1)",
+      "slow": "all 500ms cubic-bezier(0.4, 0, 0.2, 1)"
+    }
+  },
+  "layout": {
+    "containerMaxWidth": "1280px",
+    "sectionPadding": "8rem 1.5rem",
+    "gridGap": "2rem",
+    "cardPadding": "2rem",
+    "navbarHeight": "5rem",
+    "glassEffect": {
+      "background": "rgba(255, 255, 255, 0.05)",
+      "backdropFilter": "blur(16px)",
+      "border": "1px solid rgba(255, 255, 255, 0.1)"
+    }
+  }
+}
