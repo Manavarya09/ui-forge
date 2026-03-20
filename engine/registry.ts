@@ -2,12 +2,28 @@ import type { AIProvider } from '../ai/provider.js';
 import { OllamaProvider } from '../ai/ollama.js';
 import { GroqProvider } from '../ai/groq.js';
 import { logger } from '../utils/logger.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { readFileSync, existsSync } from 'fs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export interface TemplateConfig {
+  name: string;
+  description: string;
+  sections: string[];
+  tags: string[];
+  color?: string;
+}
 
 export interface Template {
   id: string;
   name: string;
   description: string;
   sections: string[];
+  tags: string[];
+  color?: string;
   files: TemplateFile[];
 }
 
@@ -23,8 +39,116 @@ export interface TemplateSection {
   animation?: string;
 }
 
+interface TemplateConfigEntry {
+  id: string;
+  name: string;
+  description: string;
+  sections: string[];
+  tags: string[];
+  color?: string;
+}
+
+const AVAILABLE_TEMPLATES: TemplateConfigEntry[] = [
+  {
+    id: 'saas',
+    name: 'SaaS',
+    description: 'Conversion-focused landing with pricing, testimonials, and hero sections optimized for software products',
+    sections: ['navbar', 'hero', 'features', 'pricing', 'testimonials', 'cta', 'footer'],
+    tags: ['landing', 'saas', 'startup'],
+    color: '#6366f1',
+  },
+  {
+    id: 'portfolio',
+    name: 'Portfolio',
+    description: 'Creative showcase for designers and developers with case studies and project galleries',
+    sections: ['navbar', 'hero', 'portfolio', 'about', 'contact', 'footer'],
+    tags: ['portfolio', 'creative', 'personal'],
+    color: '#ec4899',
+  },
+  {
+    id: 'dashboard',
+    name: 'Dashboard',
+    description: 'Analytics dashboard with charts, tables, metrics cards, and data visualization components',
+    sections: ['sidebar', 'header', 'metrics', 'charts', 'table', 'activity'],
+    tags: ['dashboard', 'analytics', 'admin'],
+    color: '#22c55e',
+  },
+  {
+    id: 'marketplace',
+    name: 'Marketplace',
+    description: 'Multi-vendor e-commerce with product grids, filters, and shopping cart functionality',
+    sections: ['navbar', 'hero', 'categories', 'products', 'featured', 'newsletter', 'footer'],
+    tags: ['ecommerce', 'marketplace', 'shop'],
+    color: '#f59e0b',
+  },
+  {
+    id: 'agency',
+    name: 'Agency',
+    description: 'Professional services website with portfolio, testimonials, and contact forms',
+    sections: ['navbar', 'hero', 'services', 'portfolio', 'testimonials', 'contact', 'footer'],
+    tags: ['agency', 'business', 'services'],
+    color: '#8b5cf6',
+  },
+  {
+    id: 'ai-product',
+    name: 'AI Product',
+    description: 'AI-powered product landing with demo sections, feature highlights, and pricing tiers',
+    sections: ['navbar', 'hero', 'demo', 'features', 'pricing', 'faq', 'cta', 'footer'],
+    tags: ['ai', 'product', 'modern'],
+    color: '#06b6d4',
+  },
+];
+
 class TemplateRegistry {
   private templates: Map<string, Template> = new Map();
+
+  constructor() {
+    this.loadTemplates();
+  }
+
+  private loadTemplates(): void {
+    const cliDir = path.dirname(__dirname);
+    const projectRoot = path.dirname(cliDir);
+    const templatesDir = path.join(projectRoot, 'templates');
+
+    for (const config of AVAILABLE_TEMPLATES) {
+      const templatePath = path.join(templatesDir, config.id);
+      
+      if (existsSync(templatePath)) {
+        const configPath = path.join(templatePath, 'config.json');
+        let templateConfig = config;
+
+        if (existsSync(configPath)) {
+          try {
+            const configData = JSON.parse(readFileSync(configPath, 'utf-8'));
+            templateConfig = { ...config, ...configData };
+          } catch {
+            logger.warning(`Failed to parse config for ${config.id}, using defaults`);
+          }
+        }
+
+        this.register({
+          id: config.id,
+          name: templateConfig.name,
+          description: templateConfig.description,
+          sections: templateConfig.sections,
+          tags: templateConfig.tags,
+          color: templateConfig.color,
+          files: [],
+        });
+      }
+    }
+
+    this.register({
+      id: 'premium-landing',
+      name: 'Premium Landing',
+      description: 'A complete landing page with premium animations and all sections included',
+      sections: ['navbar', 'hero', 'features', 'testimonials', 'pricing', 'cta', 'footer'],
+      tags: ['landing', 'premium', 'complete', 'animation'],
+      color: '#a855f7',
+      files: [],
+    });
+  }
 
   register(template: Template): void {
     this.templates.set(template.id, template);
@@ -41,6 +165,10 @@ class TemplateRegistry {
 
   exists(id: string): boolean {
     return this.templates.has(id);
+  }
+
+  getByTag(tag: string): Template[] {
+    return this.list().filter((t) => t.tags.includes(tag));
   }
 }
 
@@ -85,11 +213,3 @@ class AIManager {
 
 export const registry = new TemplateRegistry();
 export const aiManager = new AIManager();
-
-registry.register({
-  id: 'premium-landing',
-  name: 'Premium Landing',
-  description: 'A complete landing page with premium animations and sections',
-  sections: ['navbar', 'hero', 'features', 'testimonials', 'pricing', 'footer'],
-  files: [],
-});

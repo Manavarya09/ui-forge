@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --primary: 142 71% 45%;
+  --primary-foreground: 0 0% 98%;
+}
+
+body {
+  @apply bg-gray-950;
+}
+
+@layer base {
+  * {
+    @apply border-gray-800;
+  }
+}

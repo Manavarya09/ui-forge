@@ -1,289 +1,183 @@
 # UIForge
 
-UIForge is a production-grade CLI tool for generating premium, animation-rich UI systems using Next.js, Tailwind CSS, and Framer Motion.
+<p align="center">
+  <img src="https://img.shields.io/badge/Version-1.0.0-6366f1?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/License-MIT-a855f7?style=for-the-badge" alt="License" />
+  <img src="https://img.shields.io/badge/Node-18+-22c55e?style=for-the-badge" alt="Node" />
+  <a href="https://twitter.com/intent/follow?screen_name=manavarya09">
+    <img src="https://img.shields.io/twitter/follow/manavarya09?style=for-the-badge&logo=twitter" alt="Follow on Twitter" />
+  </a>
+</p>
 
-## Features
+<p align="center">
+  <strong>Generate production-grade UI systems in seconds</strong>
+</p>
 
-- **Premium Templates** - Curated, production-ready UI templates with modern design
-- **Framer Motion Animations** - Smooth, professional animations out of the box
-- **TypeScript** - Fully typed components for excellent developer experience
-- **Tailwind CSS** - Utility-first styling with shadcn/ui design tokens
-- **AI-Powered** - Optional AI features for copy generation (Ollama or Groq)
-- **One-Command Setup** - From zero to production-ready UI in seconds
+<p align="center">
+  Next.js • Tailwind CSS • Framer Motion • TypeScript • shadcn/ui • AI-Powered
+</p>
+
+---
 
 ## Quick Start
 
 ```bash
-npx uiforge create premium-landing -n my-project
-cd my-project
+npx uiforge create saas my-app
+cd my-app
 npm install
 npm run dev
 ```
 
-## Installation
-
-### Using npx (Recommended)
-
+**With AI-powered copy:**
 ```bash
-npx uiforge create premium-landing -n my-project
+npx uiforge create saas my-app --ai
 ```
 
-### Global Installation
+---
 
-```bash
-npm install -g uiforge
-uiforge create premium-landing -n my-project
-```
+## Features
+
+- **7 Production Templates** - SaaS, Portfolio, Dashboard, Marketplace, Agency, AI Product, Premium Landing
+- **AI-Powered Copy** - Generate marketing copy with Ollama (local) or Groq (cloud)
+- **Premium Animations** - Framer Motion animations out of the box
+- **TypeScript** - Full type safety throughout
+- **Tailwind CSS** - Utility-first styling with design tokens
+- **Git Init** - Auto-initialize git repositories
+- **Deploy Ready** - One-command deployment to Vercel/Netlify
+
+---
 
 ## CLI Commands
 
-### create
-
-Generate a full UI system from a template.
-
+### Create a project
 ```bash
-uiforge create <template> [options]
+npx uiforge create <template> [options]
 
 Options:
-  -n, --name <name>        Project name (default: my-app)
-  -o, --output <dir>       Output directory (default: .)
-  -s, --sections <list>    Specific sections to generate
-  --ai                     Enable AI-powered copy generation
-
-Examples:
-  uiforge create premium-landing -n my-project
-  uiforge create premium-landing -n my-project --ai
-  uiforge create premium-landing -n my-project -s hero features pricing
+  -n, --name <name>       Project name
+  -o, --output <dir>      Output directory
+  -s, --sections          Specific sections
+  --ai                    Enable AI copy generation
+  --git                   Initialize git repo
+  --install               Auto-install dependencies
+  --color <hex>           Primary color
+  --font <font>           Google Font
 ```
 
-### init
-
-Initialize a new Next.js project with Tailwind CSS and shadcn/ui.
-
+### Preview in browser
 ```bash
-uiforge init [options]
-
-Options:
-  -n, --name <name>        Project name (default: my-app)
-  -o, --output <dir>       Output directory (default: .)
+npx uiforge preview --template saas
 ```
 
-### demo
-
-Generate and preview a demo project.
-
+### Deploy
 ```bash
-uiforge demo [options]
-
-Options:
-  -n, --name <name>        Project name (default: uiforge-demo)
-  -o, --output <dir>       Output directory (default: .)
+npx uiforge deploy --provider vercel
+npx uiforge deploy --provider netlify
 ```
 
-### add
-
-Add a section to an existing project.
-
+### AI Features
 ```bash
-uiforge add <section> [options]
-
-Options:
-  -o, --output <dir>       Project directory (default: .)
+npx uiforge ai copy          # Generate marketing copy
+npx uiforge ai suggest       # Get section suggestions
 ```
 
-### theme generate
-
-Generate design tokens and theme configuration.
-
+### Other commands
 ```bash
-uiforge theme generate
+npx uiforge list             # List all templates
+npx uiforge demo              # Create demo project
+npx uiforge init              # Initialize Next.js project
+npx uiforge theme             # Manage design system
 ```
 
-### ai
-
-Run AI-powered features.
-
-```bash
-uiforge ai <task> [options]
-
-Tasks:
-  copy       Generate marketing copy
-  suggest    Get section suggestions
-
-Options:
-  -p, --provider <name>   AI provider (ollama, groq)
-```
-
-### list
-
-List available templates.
-
-```bash
-uiforge list
-```
+---
 
 ## Available Templates
 
-### Premium Landing
+| Template | Description | Tags |
+|----------|-------------|------|
+| **saas** | Conversion-focused landing | saas, startup, product |
+| **portfolio** | Creative showcase | portfolio, creative |
+| **dashboard** | Analytics admin | dashboard, admin |
+| **marketplace** | Multi-vendor e-commerce | marketplace, ecommerce |
+| **agency** | Professional services | agency, business |
+| **ai-product** | AI capabilities showcase | ai, ml, tech |
+| **premium-landing** | Full-featured landing | landing, premium |
 
-A complete, production-ready landing page with:
+---
 
-- Responsive navigation with mobile menu
-- Animated hero with gradient effects
-- Staggered reveal animations for features
-- Social proof with ratings
-- Interactive pricing cards
-- Links and social icons
-
-## Project Structure
-
-```
-uiforge/
-├── cli/                    # Commander CLI entry point
-├── engine/                 # Core generation logic
-│   ├── generator.ts       # Project generation
-│   ├── injector.ts        # Component injection
-│   └── registry.ts        # Template & AI management
-├── templates/             # UI templates
-│   └── premium-landing/  # Premium landing template
-├── design-system/         # Design tokens & config
-├── ai/                    # AI provider integrations
-│   ├── ollama.ts         # Local Ollama support
-│   └── groq.ts           # Free Groq API support
-└── utils/                 # CLI utilities
-```
-
-## Tech Stack
-
-- **Next.js 14** - App Router, Server Components
-- **TypeScript** - Full type safety
-- **Tailwind CSS** - Utility-first styling
-- **shadcn/ui** - High-quality components
-- **Framer Motion** - Production-grade animations
-- **Commander.js** - CLI framework
-
-## AI Features
-
-UIForge supports AI-powered features through two providers:
+## AI Setup
 
 ### Ollama (Local - Free)
-
 ```bash
-# Install Ollama
 curl -fsSL https://ollama.ai/install.sh | sh
-
-# Pull a model
 ollama pull llama3
-
-# Start Ollama
 ollama serve
 ```
 
 ### Groq (Cloud - Free Tier)
-
 ```bash
-# Get your API key from https://console.groq.com
 export GROQ_API_KEY=your-api-key
 ```
 
-## Generated Project Structure
+---
+
+## Architecture
 
 ```
-my-project/
-├── app/
-│   ├── globals.css        # Tailwind + custom styles
-│   ├── layout.tsx         # Root layout with fonts
-│   ├── page.tsx           # Landing page
-│   └── sections/          # Component sections
-├── components/
-│   └── ui/                # shadcn/ui components
-├── lib/
-│   └── utils.ts           # Utility functions
-├── public/                # Static assets
-├── package.json
-├── tailwind.config.ts
-├── tsconfig.json
-└── next.config.mjs
+uiforge/
+├── cli/                    # Commander.js CLI
+├── engine/                 # Generation engine
+│   ├── generator.ts        # Project generation
+│   └── registry.ts         # Template registry + AI
+├── templates/              # Source templates
+├── design-system/           # Design tokens
+├── ai/                     # Ollama + Groq providers
+├── utils/                  # Logger, FS utilities
+└── examples/               # Example projects
+    ├── saas-demo/
+    ├── portfolio-demo/
+    ├── dashboard-demo/
+    └── agency-demo/
 ```
-
-## Development
-
-### Prerequisites
-
-- Node.js 18+
-- npm or pnpm
-
-### Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/Manavarya09/ui-forge.git
-cd ui-forge
-
-# Install dependencies
-npm install
-
-# Build the CLI
-npm run build
-
-# Run locally
-node dist/cli/index.js create premium-landing -n my-project
-```
-
-## Contributing
-
-Contributions are welcome! Please read our contributing guidelines before submitting pull requests.
-
-### Development Setup
-
-1. Fork the repository
-2. Clone your fork
-3. Create a feature branch
-4. Make your changes
-5. Run tests and linting
-6. Submit a pull request
-
-### Code Style
-
-- Use TypeScript for all new code
-- Follow existing code conventions
-- Run `npm run check` before committing
-- Write meaningful commit messages
-
-### Commit Guidelines
-
-Commits should follow conventional commit format:
-
-```
-feat: add new template
-fix: resolve template generation issue
-docs: update README
-refactor: improve CLI argument parsing
-```
-
-## Security
-
-See [SECURITY.md](SECURITY.md) for our security policy and reporting guidelines.
-
-## License
-
-This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-- **Issues** - Report bugs and feature requests via GitHub Issues
-- **Discussions** - Ask questions and share ideas
-
-## Acknowledgments
-
-Built with:
-
-- [Next.js](https://nextjs.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [shadcn/ui](https://ui.shadcn.com/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [Commander.js](https://github.com/tj/commander.js)
 
 ---
 
-For detailed documentation, visit our [wiki](https://github.com/Manavarya09/ui-forge/wiki).
+## Tech Stack
+
+- **Next.js 14** - App Router
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **shadcn/ui** - Components
+- **Framer Motion** - Animations
+- **Commander.js** - CLI
+
+---
+
+## Development
+
+```bash
+# Clone
+git clone https://github.com/Manavarya09/ui-forge.git
+cd ui-forge
+
+# Install
+npm install
+
+# Build
+npm run build
+
+# Run
+node dist/cli/index.js create saas my-app
+```
+
+---
+
+## License
+
+MIT © [Manav Arya Singh](https://github.com/Manavarya09)
+
+---
+
+<p align="center">
+  <strong>Built with ❤️</strong>
+</p>

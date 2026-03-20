@@ -1,7 +1,7 @@
 {
   "name": "uiforge",
-  "version": "0.1.0",
-  "description": "Production-grade CLI for generating premium UI systems with Next.js, Tailwind, and Framer Motion",
+  "version": "1.0.0",
+  "description": "Generate production-grade UI systems in seconds with Next.js, Tailwind, and Framer Motion",
   "type": "module",
   "bin": {
     "uiforge": "./dist/cli/index.js"

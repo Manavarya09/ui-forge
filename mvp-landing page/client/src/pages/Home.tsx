@@ -4,12 +4,14 @@
    Assembles all sections in order
    ============================================================= */
 import CTAFooter from "@/components/sections/CTAFooter";
+import CLIDemo from "@/components/sections/CLIDemo";
 import FeaturesChess from "@/components/sections/FeaturesChess";
 import FeaturesGrid from "@/components/sections/FeaturesGrid";
 import Hero from "@/components/sections/Hero";
 import HowItWorks from "@/components/sections/HowItWorks";
 import Partners from "@/components/sections/Partners";
 import Stats from "@/components/sections/Stats";
+import TemplateShowcase from "@/components/sections/TemplateShowcase";
 import Testimonials from "@/components/sections/Testimonials";
 import Navbar from "@/components/Navbar";
 
@@ -25,28 +27,34 @@ export default function Home() {
       {/* Fixed Navbar */}
       <Navbar />
 
-      {/* Section 2: Hero */}
+      {/* Section 1: Hero */}
       <Hero />
 
-      {/* Section 3: Partners */}
+      {/* Section 2: CLI Demo */}
+      <CLIDemo />
+
+      {/* Section 3: Template Showcase */}
+      <TemplateShowcase />
+
+      {/* Section 4: Partners */}
       <Partners />
 
-      {/* Section 4: How It Works */}
+      {/* Section 5: How It Works */}
       <HowItWorks />
 
-      {/* Section 5: Features Chess */}
+      {/* Section 6: Features Chess */}
       <FeaturesChess />
 
-      {/* Section 6: Features Grid */}
+      {/* Section 7: Features Grid */}
       <FeaturesGrid />
 
-      {/* Section 7: Stats */}
+      {/* Section 8: Stats */}
       <Stats />
 
-      {/* Section 8: Testimonials */}
+      {/* Section 9: Testimonials */}
       <Testimonials />
 
-      {/* Section 9: CTA Footer */}
+      {/* Section 10: CTA Footer */}
       <CTAFooter />
     </div>
   );

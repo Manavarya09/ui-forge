@@ -7,6 +7,10 @@ import { generator } from '../engine/generator.js';
 import { registry, aiManager } from '../engine/registry.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { exec, spawn } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,24 +19,50 @@ const program = new Command();
 
 program
   .name('uiforge')
-  .description('Production-grade CLI for generating premium UI systems')
-  .version('0.1.0');
+  .description(`
+╔══════════════════════════════════════════════════════════════╗
+║                    UIForge CLI v1.0.0                        ║
+║           Generate production-grade UI in seconds              ║
+╚══════════════════════════════════════════════════════════════╝
+
+  Quick Start:
+    npx uiforge create saas my-app
+    npx uiforge create saas my-app --ai
+    npx uiforge preview
+`)
+  .version('1.0.0');
 
 program
   .command('init')
-  .description('Initialize a new Next.js project with Tailwind and shadcn/ui')
+  .description('Initialize a new Next.js project')
   .option('-n, --name <name>', 'Project name', 'my-app')
   .option('-o, --output <dir>', 'Output directory', '.')
+  .option('--git', 'Initialize git repository', false)
   .action(async (options) => {
     logger.logo();
     
     try {
+      const spinner = logger.startSpinner('Initializing project...');
+      
       await generator.initProject({
         projectName: options.name,
         outputDir: options.output,
         template: '',
       });
       
+      spinner.succeed();
+
+      if (options.git) {
+        const gitSpinner = logger.startSpinner('Initializing git repository...');
+        try {
+          await execAsync('git init', { cwd: path.resolve(options.output, options.name) });
+          gitSpinner.succeed();
+        } catch {
+          gitSpinner.warn('Git init skipped (git not available)');
+        }
+      }
+      
+      console.log();
       logger.done();
       logger.nextSteps(options.name);
     } catch (error) {
@@ -48,6 +78,10 @@ program
   .option('-o, --output <dir>', 'Output directory', '.')
   .option('-s, --sections <sections...>', 'Specific sections to generate')
   .option('--ai', 'Enable AI-powered copy generation')
+  .option('--git', 'Initialize git repository', false)
+  .option('--install', 'Auto-install dependencies', false)
+  .option('--color <hex>', 'Primary color (hex)', '')
+  .option('--font <font>', 'Google Font name', '')
   .action(async (template, options) => {
     logger.logo();
     
@@ -62,38 +96,44 @@ program
       }
 
       const templateData = registry.get(template)!;
-      logger.info(`Template: ${templateData.name}`);
+      console.log();
+      console.log(`  ${chalk.cyan('📦')} Template: ${chalk.white(templateData.name)}`);
+      console.log(`  ${chalk.cyan('📁')} Output:  ${chalk.white(path.resolve(options.output, options.name))}`);
       console.log();
 
       let aiProvider = null;
       if (options.ai) {
-        logger.stepSimple('Initializing AI provider...');
+        const spinner = logger.startSpinner('Connecting to AI provider...');
         aiProvider = await aiManager.initialize();
+        
         if (aiProvider) {
           const isLocal = aiProvider.name === 'ollama';
-          logger.aiProvider(aiProvider.name, isLocal ? 'local' : 'cloud');
+          spinner.succeed(chalk.green(`${isLocal ? '🏠 Ollama' : '☁️ Groq'} connected`));
         } else {
-          logger.warning('AI provider unavailable, using static content');
+          spinner.warn(chalk.yellow('AI unavailable, using static content'));
         }
         console.log();
       }
 
       const steps = [
-        'Creating project structure',
-        'Setting up dependencies',
-        'Generating layout components',
-        'Generating sections',
-        'Applying design system',
-        'Adding animations',
+        { text: 'Creating project structure', delay: 200 },
+        { text: 'Setting up package.json', delay: 150 },
+        { text: 'Configuring TypeScript', delay: 100 },
+        { text: 'Generating layout', delay: 150 },
+        { text: 'Generating sections', delay: 200 },
+        { text: 'Applying design system', delay: 150 },
+        { text: 'Adding animations', delay: 100 },
       ];
 
       if (options.ai && aiProvider) {
-        steps.push('Generating AI-powered copy');
+        steps.push({ text: 'Generating AI copy', delay: 300 });
       }
 
-      for (let i = 0; i < steps.length; i++) {
-        logger.stepSimple(steps[i]);
-        await new Promise((r) => setTimeout(r, 100));
+      console.log();
+      for (const step of steps) {
+        const spinner = logger.startSpinner(step.text);
+        await new Promise((r) => setTimeout(r, step.delay));
+        spinner.succeed();
       }
 
       await generator.createTemplate({
@@ -102,9 +142,36 @@ program
         outputDir: options.output,
         sections: options.sections,
         useAI: options.ai,
+        primaryColor: options.color || undefined,
+        font: options.font || undefined,
       });
-      
+
+      if (options.git) {
+        const gitSpinner = logger.startSpinner('Initializing git...');
+        try {
+          await execAsync('git init', { cwd: path.resolve(options.output, options.name) });
+          await execAsync('git add .', { cwd: path.resolve(options.output, options.name) });
+          await execAsync('git commit -m "Initial commit from UIForge"', { cwd: path.resolve(options.output, options.name) });
+          gitSpinner.succeed();
+        } catch {
+          gitSpinner.warn('Git init skipped');
+        }
+      }
+
+      console.log();
       logger.done();
+      
+      if (options.install) {
+        const installSpinner = logger.startSpinner('Installing dependencies...');
+        try {
+          await execAsync('npm install', { cwd: path.resolve(options.output, options.name) });
+          installSpinner.succeed();
+        } catch {
+          installSpinner.warn('npm install failed, run manually');
+        }
+        console.log();
+      }
+      
       logger.nextSteps(options.name);
     } catch (error) {
       logger.errorBox('Generation Failed', error instanceof Error ? error.message : 'Unknown error');
@@ -113,16 +180,84 @@ program
   });
 
 program
+  .command('preview')
+  .description('Generate and preview a template in browser')
+  .option('-t, --template <template>', 'Template to preview', 'saas')
+  .option('-n, --name <name>', 'Project name', 'uiforge-preview')
+  .action(async (options) => {
+    logger.logo();
+    
+    try {
+      const templateExists = registry.exists(options.template);
+      if (!templateExists) {
+        logger.errorBox('Template Not Found', `Template "${options.template}" not found.`);
+        process.exit(1);
+      }
+
+      console.log();
+      const spinner = logger.startSpinner(`Generating ${options.template} preview...`);
+      
+      await generator.createTemplate({
+        projectName: options.name,
+        template: options.template,
+        outputDir: '.',
+      });
+      
+      spinner.succeed();
+
+      const installSpinner = logger.startSpinner('Installing dependencies...');
+      const projectPath = path.resolve(options.name);
+      
+      try {
+        await execAsync('npm install', { cwd: projectPath });
+        installSpinner.succeed();
+        
+        console.log();
+        console.log(`  ${chalk.cyan('🚀')} Starting dev server at ${chalk.white('http://localhost:3000')}`);
+        console.log();
+        
+        spawn('npm', ['run', 'dev'], {
+          cwd: projectPath,
+          stdio: 'inherit',
+          shell: true,
+        });
+
+        setTimeout(() => {
+          exec('open http://localhost:3000');
+        }, 3000);
+
+        console.log(`  ${chalk.gray('Press Ctrl+C to stop')}`);
+        
+        process.on('SIGINT', () => {
+          console.log();
+          console.log(`  ${chalk.yellow('Stopping server...')}`);
+          process.exit(0);
+        });
+
+      } catch {
+        installSpinner.warn('Install failed');
+        console.log();
+        console.log(`  ${chalk.gray('Run manually:')}`);
+        console.log(`    ${chalk.white(`cd ${options.name} && npm install && npm run dev`)}`);
+        console.log();
+      }
+
+    } catch (error) {
+      logger.errorBox('Preview Failed', error instanceof Error ? error.message : 'Unknown error');
+      process.exit(1);
+    }
+  });
+
+program
   .command('demo')
-  .description('Generate and preview a demo project')
+  .description('Generate a demo project')
   .option('-n, --name <name>', 'Project name', 'uiforge-demo')
   .option('-o, --output <dir>', 'Output directory', '.')
   .action(async (options) => {
     logger.logo();
     
     try {
-      logger.header('Generating Demo');
-      logger.stepSimple('Creating preview project...');
+      const spinner = logger.startSpinner('Creating demo...');
       
       await generator.createTemplate({
         projectName: options.name,
@@ -130,20 +265,66 @@ program
         outputDir: options.output,
       });
 
-      console.log();
-      console.log(`  ${chalk.green('🌐 Opening demo preview...')}`);
-      console.log();
-      console.log(`  ${chalk.gray('Demo project created at:')}`);
-      console.log(`    ${chalk.white(path.resolve(options.output, options.name))}`);
-      console.log();
-      console.log(`  ${chalk.gray('To run the demo:')}`);
-      console.log(`    ${chalk.white(`cd ${options.name} && npm install && npm run dev`)}`);
-      console.log();
+      spinner.succeed();
+
+      const installSpinner = logger.startSpinner('Installing dependencies...');
+      
+      try {
+        await execAsync('npm install', { cwd: path.resolve(options.output, options.name) });
+        installSpinner.succeed();
+        
+        console.log();
+        console.log(`  ${chalk.green('🎉')} Demo ready!`);
+        console.log();
+        console.log(`    ${chalk.white(`cd ${options.name}`)}`);
+        console.log(`    ${chalk.green('npm run dev')}`);
+        console.log();
+      } catch {
+        installSpinner.warn('Install failed, run manually');
+        console.log();
+        console.log(`  ${chalk.gray('Demo at:')} ${chalk.white(path.resolve(options.output, options.name))}`);
+        console.log();
+      }
 
       logger.done();
     } catch (error) {
-      logger.errorBox('Demo Generation Failed', error instanceof Error ? error.message : 'Unknown error');
+      logger.errorBox('Demo Failed', error instanceof Error ? error.message : 'Unknown error');
       process.exit(1);
+    }
+  });
+
+program
+  .command('deploy')
+  .description('Deploy project to Vercel or Netlify')
+  .option('-p, --provider <provider>', 'Provider: vercel|netlify', 'vercel')
+  .option('-n, --name <name>', 'Project name')
+  .action(async (options) => {
+    logger.logo();
+    
+    const provider = options.provider?.toLowerCase();
+    if (provider !== 'vercel' && provider !== 'netlify') {
+      logger.errorBox('Invalid Provider', 'Use: uiforge deploy --provider vercel|netlify');
+      process.exit(1);
+    }
+
+    console.log();
+    const spinner = logger.startSpinner(`Deploying to ${provider}...`);
+    
+      try {
+        if (provider === 'vercel') {
+          spawn('npx', ['vercel', '--yes'], { stdio: 'inherit', shell: true });
+        } else {
+          spawn('npx', ['netlify', 'deploy', '--prod'], { stdio: 'inherit', shell: true });
+        }
+      spinner.succeed();
+      console.log();
+      console.log(`  ${chalk.green('🚀')} Deployed successfully!`);
+      console.log();
+    } catch {
+      spinner.fail(chalk.red('Deploy failed'));
+      console.log();
+      console.log(`  ${chalk.yellow('Make sure you are in a project directory with')} ${chalk.white('npm install')} ${chalk.yellow('completed.')}`);
+      console.log();
     }
   });
 
@@ -152,79 +333,108 @@ program
   .description('Add a section to your project')
   .option('-o, --output <dir>', 'Project directory', '.')
   .action(async (section, options) => {
+    logger.logo();
+    
     try {
-      logger.stepSimple(`Adding ${section} section...`);
+      const spinner = logger.startSpinner(`Adding ${section}...`);
       await generator.addSection(section, options.output);
-      logger.success(`Section "${section}" added successfully`);
+      spinner.succeed();
+      console.log();
+      logger.done();
     } catch (error) {
-      logger.errorBox('Section Add Failed', error instanceof Error ? error.message : 'Unknown error');
+      logger.errorBox('Add Failed', error instanceof Error ? error.message : 'Unknown error');
       process.exit(1);
     }
   });
 
 program
-  .command('theme generate')
-  .description('Generate design tokens and theme')
-  .action(async () => {
-    logger.header('Generating Design Tokens');
-    logger.stepSimple('Creating design system...');
-    await new Promise((r) => setTimeout(r, 300));
-    logger.success('Tailwind config generated');
-    logger.success('CSS variables generated');
-    logger.success('Typography tokens generated');
-    logger.done();
+  .command('theme')
+  .description('Manage design system')
+  .argument('[action]', 'Action: generate|list', 'generate')
+  .action(async (action) => {
+    logger.logo();
+    
+    if (action === 'list') {
+      console.log();
+      console.log(`  ${chalk.bold.white('Available Themes')}`);
+      console.log();
+      console.log(`  ${chalk.cyan('default')}     ${chalk.gray('- Modern, clean design')}`);
+      console.log(`  ${chalk.cyan('minimal')}     ${chalk.gray('- Minimalist approach')}`);
+      console.log(`  ${chalk.cyan('bold')}       ${chalk.gray('- Bold typography')}`);
+      console.log();
+    } else {
+      console.log();
+      logger.steps([
+        'Creating design tokens...',
+        'Generating Tailwind config...',
+        'Setting up CSS variables...',
+        'Configuring typography...',
+      ]);
+      console.log();
+      logger.done();
+    }
   });
 
 program
   .command('ai <task>')
-  .description('Run AI-powered features (copy, suggestions)')
-  .option('-p, --provider <provider>', 'AI provider (ollama, groq)')
-  .action(async (task) => {
-    logger.header('AI Features');
+  .description('AI-powered features')
+  .option('-p, --provider <provider>', 'Provider: ollama|groq', '')
+  .action(async (task, options) => {
+    logger.logo();
     
+    const spinner = logger.startSpinner('Connecting to AI...');
     const provider = await aiManager.initialize();
     
     if (!provider) {
-      logger.warningBox(
-        'AI Provider Unavailable',
-        [
-          'No AI provider detected. Options:',
-          '• Install Ollama: https://ollama.ai',
-          '• Set GROQ_API_KEY environment variable',
-        ]
-      );
+      spinner.fail(chalk.red('No AI provider'));
+      console.log();
+      logger.warningBox('Setup Required', [
+        '',
+        '  Option 1 - Ollama (free, local):',
+        '    curl -fsSL https://ollama.ai/install.sh | sh',
+        '    ollama pull llama3',
+        '',
+        '  Option 2 - Groq (free tier):',
+        '    export GROQ_API_KEY=your-key',
+        ''
+      ]);
       return;
     }
 
     const isLocal = provider.name === 'ollama';
+    spinner.succeed(chalk.green(`${isLocal ? '🏠 Ollama' : '☁️ Groq'} ready`));
+    console.log();
     logger.aiProvider(provider.name, isLocal ? 'local' : 'cloud');
 
     if (task === 'copy') {
-      const context = 'Build a modern SaaS platform that helps teams collaborate';
-      logger.stepSimple('Generating copy...');
-      const result = await provider.generateCopy(context);
+      const copySpinner = logger.startSpinner('Generating copy...');
+      const result = await provider.generateCopy('Modern SaaS platform for teams');
       
       if (result.success) {
+        copySpinner.succeed();
         console.log();
-        console.log(`  ${chalk.green.bold('Generated Copy:')}`);
+        console.log(`  ${chalk.green.bold('Generated:')}`);
         console.log();
-        console.log('  ' + result.content.split('\n').join('\n  '));
+        result.content.split('\n').forEach(line => {
+          if (line.trim()) console.log(`    ${chalk.white(line)}`);
+        });
         console.log();
       } else {
-        logger.error('Failed to generate copy: ' + (result.error || 'Unknown error'));
+        copySpinner.fail(chalk.red('Generation failed'));
       }
     } else if (task === 'suggest') {
-      logger.stepSimple('Generating section suggestions...');
+      const spinner = logger.startSpinner('Analyzing...');
       const result = await provider.generateSectionSuggestions('landing');
       
       if (result.success) {
+        spinner.succeed();
         console.log();
         console.log(`  ${chalk.green.bold('Suggested Sections:')}`);
         console.log();
-        console.log('  ' + result.content.split('\n').join('\n  '));
+        result.content.split('\n').forEach(line => {
+          if (line.trim()) console.log(`    ${chalk.cyan('•')} ${chalk.white(line)}`);
+        });
         console.log();
-      } else {
-        logger.error('Failed to generate suggestions: ' + (result.error || 'Unknown error'));
       }
     }
 
@@ -234,24 +444,39 @@ program
 program
   .command('list')
   .description('List available templates')
-  .action(() => {
-    logger.header('Available Templates');
-    
+  .option('--json', 'Output as JSON')
+  .action((options) => {
     const templates = registry.list();
 
-    for (let i = 0; i < templates.length; i++) {
-      const template = templates[i];
-      if (i > 0) console.log();
-      
-      console.log(`  ${chalk.bold(i + 1 + '. ' + template.name)}`);
-      console.log(`     ${chalk.gray('ID: ' + template.id)}`);
-      console.log(`     ${chalk.gray(template.description)}`);
-      console.log(`     ${chalk.cyan('Sections: ' + template.sections.join(', '))}`);
+    if (options.json) {
+      console.log(JSON.stringify(templates.map(t => ({
+        id: t.id,
+        name: t.name,
+        description: t.description,
+        sections: t.sections,
+        tags: t.tags,
+      })), null, 2));
+      return;
     }
-    
+
     console.log();
-    console.log(`  ${chalk.gray('Usage:')}`);
-    console.log(`    ${chalk.white('uiforge create premium-landing -n my-project')}`);
+    console.log(chalk.bold.white('  ╔═══════════════════════════════════════════════════╗'));
+    console.log(chalk.bold.white('  ║            Available Templates                      ║'));
+    console.log(chalk.bold.white('  ╚═══════════════════════════════════════════════════╝'));
+    console.log();
+
+    templates.forEach((template, i) => {
+      const color = (template as any).color || '#6366f1';
+      console.log(`  ${chalk.bold(i + 1 + '.')} ${chalk.white(template.name)} ${chalk.gray(`[${template.id}]`)}`);
+      console.log(`     ${chalk.gray(template.description)}`);
+      console.log(`     ${chalk.cyan('Tags:')} ${chalk.white(template.tags.join(', '))}`);
+      console.log();
+    });
+    
+    console.log(`  ${chalk.gray('─────────────────────────────────────────────────────')}`);
+    console.log();
+    console.log(`  ${chalk.gray('Usage:')} ${chalk.white('uiforge create <template> -n my-project')}`);
+    console.log(`  ${chalk.gray('Example:')} ${chalk.white('npx uiforge create saas my-app --ai')}`);
     console.log();
   });
 

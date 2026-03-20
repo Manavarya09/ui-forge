@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import gradient from 'gradient-string';
+import ora, { type Ora } from 'ora';
 
 const theme = {
   primary: gradient(['#6366f1', '#8b5cf6', '#a855f7']),
@@ -15,6 +16,7 @@ interface Step {
 class ProgressTracker {
   private steps: Step[] = [];
   private currentIndex = 0;
+  private spinner: Ora | null = null;
 
   start(steps: string[]): void {
     this.steps = steps.map((name) => ({ name, status: 'pending' }));
@@ -60,32 +62,54 @@ class ProgressTracker {
       process.stdout.write(`  ${icon} ${color(step.name)}\n`);
     }
   }
+
+  startSpinner(text: string): Ora {
+    this.spinner = ora({
+      text: chalk.cyan(text),
+      spinner: 'dots',
+      color: 'cyan',
+    }).start();
+    return this.spinner;
+  }
+
+  stopSpinner(success: boolean = true, text?: string): void {
+    if (this.spinner) {
+      if (success) {
+        this.spinner.succeed(text ? chalk.green(text) : undefined);
+      } else {
+        this.spinner.fail(text ? chalk.red(text) : undefined);
+      }
+      this.spinner = null;
+    }
+  }
 }
+
+const progressTracker = new ProgressTracker();
 
 export const logger = {
   logo: () => {
     console.log();
     console.log(theme.primary('  ╔═══════════════════════════════════════════════════╗'));
-    console.log(theme.primary('  ║') + '   ' + chalk.bold.white('UIForge') + ' ' + chalk.gray('v0.1.0') + ' '.repeat(24) + theme.primary('║'));
+    console.log(theme.primary('  ║') + '   ' + chalk.bold.white('UIForge') + ' ' + chalk.gray('v1.0') + ' '.repeat(31) + theme.primary('║'));
     console.log(theme.primary('  ║') + '   ' + chalk.gray('Premium UI Generation CLI') + ' '.repeat(20) + theme.primary('║'));
     console.log(theme.primary('  ╚═══════════════════════════════════════════════════╝'));
     console.log();
   },
 
   success: (message: string) => {
-    console.log(chalk.green('  ✓') + ' ' + message);
+    console.log('  ' + chalk.green('✓') + ' ' + chalk.green(message));
   },
 
   error: (message: string) => {
-    console.log(chalk.red('  ✗') + ' ' + message);
+    console.log('  ' + chalk.red('✗') + ' ' + chalk.red(message));
   },
 
   warning: (message: string) => {
-    console.log(chalk.yellow('  ⚠') + ' ' + message);
+    console.log('  ' + chalk.yellow('⚠') + ' ' + chalk.yellow(message));
   },
 
   info: (message: string) => {
-    console.log(chalk.cyan('  ℹ') + ' ' + message);
+    console.log('  ' + chalk.cyan('ℹ') + ' ' + chalk.cyan(message));
   },
 
   step: (current: number, total: number, message: string) => {
@@ -100,20 +124,40 @@ export const logger = {
   },
 
   stepSimple: (message: string) => {
-    console.log(chalk.cyan('  →') + ' ' + chalk.white(message));
+    const steps = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+    let i = 0;
+    const interval = setInterval(() => {
+      process.stdout.write(`\r  ${chalk.cyan(steps[i % steps.length])} ${chalk.white(message)}`);
+      i++;
+    }, 80);
+    
+    setTimeout(() => {
+      clearInterval(interval);
+      process.stdout.write('\r' + ' '.repeat(60) + '\r');
+      console.log('  ' + chalk.green('✓') + ' ' + chalk.white(message));
+    }, 400);
+  },
+
+  steps: (messages: string[], duration: number = 300) => {
+    console.log();
+    messages.forEach((msg, index) => {
+      setTimeout(() => {
+        console.log('  ' + chalk.cyan('→') + ' ' + chalk.white(msg));
+      }, index * duration);
+    });
   },
 
   done: () => {
     console.log();
     console.log(theme.success('  ╔═══════════════════════════════════════════════════╗'));
-    console.log(theme.success('  ║') + ' ' + chalk.green.bold('✨ UIForge Ready!') + ' '.repeat(29) + theme.success('║'));
+    console.log(theme.success('  ║') + ' ' + chalk.green.bold('🚀 UIForge Ready!') + ' '.repeat(28) + theme.success('║'));
     console.log(theme.success('  ╚═══════════════════════════════════════════════════╝'));
     console.log();
   },
 
   header: (message: string) => {
     console.log();
-    console.log(chalk.bold.underline('  ' + message));
+    console.log(chalk.bold.white('  ' + message));
     console.log();
   },
 
@@ -125,16 +169,17 @@ export const logger = {
     console.log();
     console.log(chalk.bold.white('  Next steps:'));
     console.log();
-    console.log(chalk.gray('    $') + chalk.white(' cd ' + projectName));
-    console.log(chalk.gray('    $') + chalk.white(' npm install'));
-    console.log(chalk.gray('    $') + chalk.green(' npm run dev'));
+    console.log('  ' + chalk.gray('$') + ' ' + chalk.white(`cd ${projectName}`));
+    console.log('  ' + chalk.gray('$') + ' ' + chalk.white('npm install'));
+    console.log('  ' + chalk.gray('$') + ' ' + chalk.green('npm run dev'));
     console.log();
   },
 
   aiProvider: (provider: string, type: 'local' | 'cloud') => {
     const icon = type === 'local' ? '🏠' : '☁️';
-    const label = type === 'local' ? 'local' : 'cloud';
-    console.log(chalk.cyan(`  ${icon} Using ${provider} (${label})`));
+    const label = type === 'local' ? 'Using Ollama (local)' : 'Using Groq (cloud)';
+    console.log();
+    console.log('  ' + chalk.cyan(icon) + ' ' + chalk.white(label));
   },
 
   warningBox: (title: string, messages: string[]) => {
@@ -169,4 +214,14 @@ export const logger = {
   clearSpin: () => {
     process.stdout.write('\r' + ' '.repeat(60) + '\r');
   },
+
+  startSpinner: (text: string) => {
+    return progressTracker.startSpinner(text);
+  },
+
+  stopSpinner: (success: boolean = true, text?: string) => {
+    progressTracker.stopSpinner(success, text);
+  },
+
+  progress: progressTracker,
 };

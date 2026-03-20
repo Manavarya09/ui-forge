@@ -9,10 +9,9 @@ import { useEffect, useState } from "react";
 
 const navLinks = [
   { label: "Home", href: "#home" },
-  { label: "Product", href: "#services" },
-  { label: "Templates", href: "#work" },
-  { label: "How it Works", href: "#process" },
-  { label: "Docs", href: "#contact" },
+  { label: "Demo", href: "#demo" },
+  { label: "Templates", href: "#templates" },
+  { label: "Docs", href: "https://github.com/Manavarya09/ui-forge#readme" },
 ];
 
 export default function Navbar() {
@@ -121,8 +120,9 @@ export default function Navbar() {
           </a>
         ))}
         <a
-          href="#contact"
-          onClick={(e) => handleNavClick(e, "#contact")}
+          href="https://github.com/Manavarya09/ui-forge"
+          target="_blank"
+          rel="noopener noreferrer"
           style={{
             marginLeft: "6px",
             display: "inline-flex",
@@ -152,8 +152,9 @@ export default function Navbar() {
 
       {/* Mobile CTA */}
       <a
-        href="#contact"
-        onClick={(e) => handleNavClick(e, "#contact")}
+        href="https://github.com/Manavarya09/ui-forge"
+        target="_blank"
+        rel="noopener noreferrer"
         className="mobile-cta"
         style={{
           display: "inline-flex",

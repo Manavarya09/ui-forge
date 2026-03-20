@@ -1,0 +1,10 @@
+{
+  "name": "Premium Landing",
+  "description": "A complete landing page with premium animations and all sections included",
+  "sections": ["navbar", "hero", "features", "testimonials", "pricing", "cta", "footer"],
+  "tags": ["landing", "premium", "complete", "animation"],
+  "colors": {
+    "primary": "hsl(270 76% 53%)",
+    "secondary": "hsl(239 84% 67%)"
+  }
+}

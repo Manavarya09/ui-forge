@@ -8,9 +8,18 @@
    ============================================================= */
 import BlurText from "@/components/BlurText";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Play } from "lucide-react";
+import { ArrowUpRight, Play, Copy, Check } from "lucide-react";
+import { useState } from "react";
 
 export default function Hero() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText("npx uiforge create saas my-app");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <section
       id="home"
@@ -163,7 +172,9 @@ export default function Hero() {
         >
           {/* Primary CTA — liquid-glass-strong */}
           <a
-            href="#contact"
+            href="https://github.com/Manavarya09/ui-forge"
+            target="_blank"
+            rel="noopener noreferrer"
             className="liquid-glass-strong"
             style={{
               display: "inline-flex",
@@ -184,7 +195,13 @@ export default function Hero() {
           </a>
 
           {/* Secondary CTA — text only */}
-          <button
+          <a
+            href="#demo"
+            onClick={(e) => {
+              e.preventDefault();
+              const target = document.querySelector("#demo");
+              if (target) target.scrollIntoView({ behavior: "smooth" });
+            }}
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -199,6 +216,7 @@ export default function Hero() {
               border: "none",
               cursor: "pointer",
               transition: "color 0.2s ease",
+              textDecoration: "none",
             }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.color = "#fff";
@@ -209,6 +227,53 @@ export default function Hero() {
           >
             <Play size={14} fill="currentColor" strokeWidth={0} />
             View Demo
+          </a>
+        </motion.div>
+
+        {/* Install Command */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.4 }}
+          style={{
+            marginTop: "2rem",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            padding: "10px 16px",
+            borderRadius: "8px",
+            background: "rgba(255, 255, 255, 0.05)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+          }}
+        >
+          <code
+            style={{
+              fontFamily: "monospace",
+              fontSize: "0.875rem",
+              color: "rgba(255, 255, 255, 0.8)",
+            }}
+          >
+            npx uiforge create saas my-app
+          </code>
+          <button
+            onClick={handleCopy}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "4px",
+              borderRadius: "4px",
+              background: copied ? "rgba(34, 197, 94, 0.2)" : "transparent",
+              border: "none",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+            }}
+          >
+            {copied ? (
+              <Check size={14} color="#22c55e" />
+            ) : (
+              <Copy size={14} color="rgba(255,255,255,0.5)" />
+            )}
           </button>
         </motion.div>
       </div>

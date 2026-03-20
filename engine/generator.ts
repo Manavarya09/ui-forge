@@ -3,6 +3,7 @@ import { logger } from '../utils/logger.js';
 import { registry, type Template, type TemplateFile } from './registry.js';
 import { generateTailwindConfig, generateCSSVariables } from '../design-system/tailwind-generator.js';
 import { defaultTokens } from '../design-system/tokens.js';
+import { aiManager } from './registry.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -16,6 +17,16 @@ export interface GenerationOptions {
   sections?: string[];
   useAI?: boolean;
   darkMode?: boolean;
+  primaryColor?: string;
+  font?: string;
+}
+
+export interface GeneratedCopy {
+  heroTitle: string;
+  heroSubtitle: string;
+  ctaText: string;
+  featuresTitle: string;
+  pricingTitle: string;
 }
 
 export class Generator {
@@ -61,18 +72,70 @@ export class Generator {
     const sourceTemplatePath = path.join(projectRoot, 'templates', options.template);
     const templateExists = await fileExists(sourceTemplatePath);
 
+    let generatedCopy: GeneratedCopy | null = null;
+
+    if (options.useAI) {
+      logger.info('Generating AI-powered copy...');
+      const provider = await aiManager.initialize();
+      if (provider) {
+        const templateContext = `Generate marketing copy for a ${template.name.toLowerCase()} website`;
+        const result = await provider.generateCopy(templateContext);
+        
+        if (result.success) {
+          generatedCopy = this.parseGeneratedCopy(result.content);
+          logger.success('AI-powered copy generated');
+        } else {
+          logger.warning('AI generation failed, using default copy');
+        }
+      }
+    }
+
     if (templateExists) {
       const { default: fsExtra } = await import('fs-extra');
       await fsExtra.copy(sourceTemplatePath, path.join(outputPath, 'app'));
       logger.success(`Template copied`);
+      
+      if (generatedCopy) {
+        await this.injectAICopy(outputPath, generatedCopy);
+      }
     } else {
-      await this.generateFromRegistry(template, outputPath, sections);
+      await this.generateFromRegistry(template, outputPath, sections, generatedCopy);
     }
 
     await this.generateDesignSystem(outputPath);
+  }
+
+  private parseGeneratedCopy(content: string): GeneratedCopy {
+    const lines = content.split('\n').filter(l => l.trim());
     
-    if (options.useAI) {
-      logger.stepSimple('AI-powered copy generated');
+    return {
+      heroTitle: lines[0]?.replace(/^#?\s*/, '').trim() || 'Build Something Amazing',
+      heroSubtitle: lines[1]?.replace(/^#?\s*/, '').trim() || 'The modern platform for building and scaling your product.',
+      ctaText: lines.find(l => l.toLowerCase().includes('get started') || l.toLowerCase().includes('start'))?.replace(/^#?\s*/, '').trim() || 'Get Started',
+      featuresTitle: lines.find(l => l.toLowerCase().includes('feature'))?.replace(/^#?\s*/, '').trim() || 'Features',
+      pricingTitle: lines.find(l => l.toLowerCase().includes('pricing') || l.toLowerCase().includes('price'))?.replace(/^#?\s*/, '').trim() || 'Pricing',
+    };
+  }
+
+  private async injectAICopy(outputPath: string, copy: GeneratedCopy): Promise<void> {
+    const pagePath = path.join(outputPath, 'app', 'page.tsx');
+    const pageExists = await fileExists(pagePath);
+    
+    if (pageExists) {
+      const { readFile } = await import('fs/promises');
+      let content = await readFile(pagePath, 'utf-8');
+      
+      content = content.replace(
+        /Build Something Amazing|Build Amazing Products|Build [\w\s]+/,
+        copy.heroTitle
+      );
+      content = content.replace(
+        /Create stunning[^"]*|The modern platform[^"]*/,
+        copy.heroSubtitle
+      );
+      
+      await writeFile(pagePath, content);
+      logger.success('AI copy injected into template');
     }
   }
 
@@ -349,7 +412,8 @@ export function cn(...inputs: ClassValue[]) {
   private async generateFromRegistry(
     template: Template,
     outputPath: string,
-    sections: string[]
+    sections: string[],
+    generatedCopy?: GeneratedCopy | null
   ): Promise<void> {
     for (const file of template.files) {
       await writeFile(path.join(outputPath, file.path), file.content);
@@ -361,11 +425,11 @@ export function cn(...inputs: ClassValue[]) {
     );
 
     const sectionComponents: Record<string, string> = {
-      hero: this.generateHeroSection(),
-      features: this.generateFeaturesSection(),
+      hero: this.generateHeroSection(generatedCopy),
+      features: this.generateFeaturesSection(generatedCopy),
       testimonials: this.generateTestimonialsSection(),
-      pricing: this.generatePricingSection(),
-      cta: this.generateCTASection(),
+      pricing: this.generatePricingSection(generatedCopy),
+      cta: this.generateCTASection(generatedCopy),
       footer: this.generateFooterSection(),
       navbar: this.generateNavbarSection(),
     };
@@ -445,7 +509,11 @@ ${components}
       .join('');
   }
 
-  private generateHeroSection(): string {
+  private generateHeroSection(copy?: GeneratedCopy | null): string {
+    const title = copy?.heroTitle || 'Build <span className="text-gradient">Amazing</span> Products';
+    const subtitle = copy?.heroSubtitle || 'Create stunning, production-ready interfaces with ease. The modern way to build beautiful web applications.';
+    const cta = copy?.ctaText || 'Get Started';
+    
     return `import { motion } from 'framer-motion';
 
 export default function Hero() {
@@ -465,7 +533,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-5xl md:text-7xl font-bold tracking-tight mb-6"
         >
-          Build <span className="text-gradient">Amazing</span> Products
+          ${title}
         </motion.h1>
         
         <motion.p
@@ -474,8 +542,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8"
         >
-          Create stunning, production-ready interfaces with ease.
-          The modern way to build beautiful web applications.
+          ${subtitle}
         </motion.p>
         
         <motion.div
@@ -485,7 +552,7 @@ export default function Hero() {
           className="flex gap-4 justify-center"
         >
           <button className="px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition-opacity">
-            Get Started
+            ${cta}
           </button>
           <button className="px-8 py-4 border border-border rounded-lg font-semibold hover:bg-muted transition-colors">
             Learn More
@@ -498,7 +565,8 @@ export default function Hero() {
 `;
   }
 
-  private generateFeaturesSection(): string {
+  private generateFeaturesSection(copy?: GeneratedCopy | null): string {
+    const featuresTitle = copy?.featuresTitle || 'Features';
     return `import { motion } from 'framer-motion';
 
 const features = [
@@ -649,7 +717,8 @@ export default function Testimonials() {
 `;
   }
 
-  private generatePricingSection(): string {
+  private generatePricingSection(copy?: GeneratedCopy | null): string {
+    const pricingTitle = copy?.pricingTitle || 'Simple Pricing';
     return `import { motion } from 'framer-motion';
 
 const plans = [
@@ -683,7 +752,7 @@ export default function Pricing() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold mb-4">Simple Pricing</h2>
+          <h2 className="text-4xl font-bold mb-4">${pricingTitle}</h2>
           <p className="text-muted-foreground text-lg">
             Choose the plan that fits your needs.
           </p>
@@ -727,7 +796,8 @@ export default function Pricing() {
 `;
   }
 
-  private generateCTASection(): string {
+  private generateCTASection(copy?: GeneratedCopy | null): string {
+    const ctaText = copy?.ctaText || 'Start Building Today';
     return `import { motion } from 'framer-motion';
 
 export default function CTA() {
@@ -761,7 +831,7 @@ export default function CTA() {
               Join thousands of developers building beautiful products.
             </p>
             <button className="px-8 py-4 bg-white text-primary font-bold rounded-lg hover:opacity-90 transition-opacity">
-              Start Building Today
+              ${ctaText}
             </button>
           </div>
         </div>

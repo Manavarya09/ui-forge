@@ -83,7 +83,9 @@ export default function CTAFooter() {
         <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", justifyContent: "center" }}>
           {/* Primary — liquid-glass-strong */}
           <a
-            href="#"
+            href="https://github.com/Manavarya09/ui-forge"
+            target="_blank"
+            rel="noopener noreferrer"
             className="liquid-glass-strong"
             style={{
               display: "inline-flex",

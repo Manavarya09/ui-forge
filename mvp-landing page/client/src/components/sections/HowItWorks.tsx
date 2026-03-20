@@ -87,7 +87,9 @@ export default function HowItWorks() {
         </p>
 
         <a
-          href="#contact"
+          href="https://github.com/Manavarya09/ui-forge"
+          target="_blank"
+          rel="noopener noreferrer"
           className="liquid-glass-strong"
           style={{
             display: "inline-flex",
