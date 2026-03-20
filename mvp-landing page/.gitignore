@@ -3,6 +3,8 @@
 .pnpm-store/
 
 # Build outputs
+# NOTE: `dist/` is intentionally ignored. Vercel (and other hosts) will run `pnpm build`
+# and generate `dist/` during the deploy build step, so it should not be committed.
 dist/
 build/
 *.dist
