@@ -1,6 +1,6 @@
 {
   "name": "uiforge",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Generate production-grade UI systems in seconds with Next.js, Tailwind, and Framer Motion",
   "type": "module",
   "bin": {
