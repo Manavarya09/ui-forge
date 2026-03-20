@@ -87,7 +87,7 @@ export default function HowItWorks() {
         </p>
 
         <a
-          href="https://github.com/Manavarya09/ui-forge"
+          href="https://www.npmjs.com/package/@manavarya0909/ui-forge-cli"
           target="_blank"
           rel="noopener noreferrer"
           className="liquid-glass-strong"
@@ -105,7 +105,7 @@ export default function HowItWorks() {
             transition: "background 0.2s ease",
           }}
         >
-          Try CLI
+          Install Free
           <ArrowUpRight size={16} strokeWidth={2} />
         </a>
       </div>

@@ -15,7 +15,7 @@ export default function Hero() {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText("npx uiforge create saas my-app");
+    navigator.clipboard.writeText("npx @manavarya0909/ui-forge-cli create saas my-app");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -155,12 +155,12 @@ export default function Hero() {
               fontWeight: 300,
               fontSize: "0.95rem",
               color: "rgba(255,255,255,0.6)",
-              maxWidth: "480px",
+              maxWidth: "580px",
               lineHeight: "1.6",
               marginBottom: "2.5rem",
             }}
           >
-            Generate premium, animation-rich frontend systems with one command. No templates. No drag-and-drop. Just real code.
+            Generate premium, animation-rich frontend systems with 12 design styles. One command to production-ready Next.js, Tailwind & Framer Motion code.
           </motion.p>
 
         {/* CTA Buttons */}
@@ -253,7 +253,7 @@ export default function Hero() {
               color: "rgba(255, 255, 255, 0.8)",
             }}
           >
-            npx uiforge create saas my-app
+            npx @manavarya0909/ui-forge-cli create saas my-app
           </code>
           <button
             onClick={handleCopy}

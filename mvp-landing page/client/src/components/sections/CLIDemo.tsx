@@ -8,16 +8,16 @@ import { Terminal, Copy, Check } from "lucide-react";
 import { useState } from "react";
 
 const cliCommands = [
-  { prompt: "$", command: "npx uiforge create saas my-app", output: null },
-  { prompt: "$", command: "cd my-app", output: null },
-  { prompt: "$", command: "npm install", output: "✓ Dependencies installed" },
+  { prompt: "$", command: "npx @manavarya0909/ui-forge-cli create saas my-app", output: null },
+  { prompt: "$", command: "cd my-app && npm install", output: "✓ Dependencies installed" },
   { prompt: "$", command: "npm run dev", output: "▲ Ready on http://localhost:3000" },
+  { prompt: "$", command: "# Add glass style: --style glass", output: "🎨 Glass morphism applied!" },
 ];
 
 export default function CLIDemo() {
   const [copied, setCopied] = useState(false);
 
-  const fullCommand = "npx uiforge create saas my-app && cd my-app && npm install && npm run dev";
+  const fullCommand = "npx @manavarya0909/ui-forge-cli create saas my-app --style glass && cd my-app && npm install && npm run dev";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(fullCommand);

@@ -1,30 +1,45 @@
 /* =============================================================
-   Features Grid — 4-column "Why Us" cards
+   Features Grid — Design Styles showcase
    Design: Liquid Brutalism Dark Premium
-   4 liquid-glass cards with icon, title, description
+   12 design styles with preview cards
    ============================================================= */
-import { BarChart3, Palette, Shield, Zap } from "lucide-react";
+import { Sparkles, Layers, Code, Palette } from "lucide-react";
+
+const designStyles = [
+  { name: "Glass", color: "#8b5cf6", bg: "rgba(139, 92, 246, 0.2)" },
+  { name: "Minimal", color: "#6366f1", bg: "rgba(99, 102, 241, 0.2)" },
+  { name: "Brutalism", color: "#ef4444", bg: "rgba(239, 68, 68, 0.2)" },
+  { name: "Enterprise", color: "#3b82f6", bg: "rgba(59, 130, 246, 0.2)" },
+  { name: "Bento", color: "#f97316", bg: "rgba(249, 115, 22, 0.2)" },
+  { name: "Neumorphism", color: "#a855f7", bg: "rgba(168, 85, 247, 0.2)" },
+  { name: "Flat", color: "#22c55e", bg: "rgba(34, 197, 94, 0.2)" },
+  { name: "Material", color: "#06b6d4", bg: "rgba(6, 182, 212, 0.2)" },
+  { name: "Dark Minimal", color: "#e5e5e5", bg: "rgba(255, 255, 255, 0.1)" },
+  { name: "Tech Futurism", color: "#22d3ee", bg: "rgba(34, 211, 238, 0.2)" },
+  { name: "Monochrome", color: "#71717a", bg: "rgba(113, 113, 122, 0.2)" },
+  { name: "Swiss", color: "#fafafa", bg: "rgba(250, 250, 250, 0.1)" },
+];
 
 const features = [
   {
-    icon: Zap,
-    title: "Instant Generation",
-    description: "Generate full UI systems in seconds, not weeks.",
+    icon: Sparkles,
+    title: "12 Design Styles",
+    description: "Glass, Brutalism, Minimal, Enterprise, Bento, Neumorphism, Flat, Material, Dark Minimal, Tech Futurism, Monochrome, Swiss",
+  },
+  {
+    icon: Layers,
+    title: "12 Production Templates",
+    description: "SaaS, Portfolio, Dashboard, Marketplace, Agency, AI Product, Real Estate, E-Commerce, Fitness & more",
+  },
+  {
+    icon: Code,
+    title: "Production Code",
+    description: "Clean TypeScript, Next.js 14 App Router, Tailwind CSS, Framer Motion. No bloat.",
   },
   {
     icon: Palette,
-    title: "Design System First",
-    description: "Typography, spacing, and tokens—automatically structured.",
-  },
-  {
-    icon: BarChart3,
-    title: "Production Code",
-    description: "Clean, scalable React code. No templates. No bloat.",
-  },
-  {
-    icon: Shield,
-    title: "Developer Native",
-    description: "Works directly in your stack. No lock-in.",
+    title: "AI-Powered Copy",
+    description: "Generate marketing copy with Ollama (local) or Groq (cloud) AI providers.",
   },
 ];
 
@@ -59,11 +74,66 @@ export default function FeaturesGrid() {
           </h2>
         </div>
 
-        {/* Cards grid */}
+        {/* Design Styles Preview */}
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
+            gap: "0.75rem",
+            marginBottom: "4rem",
+          }}
+        >
+          {designStyles.map(({ name, color, bg }) => (
+            <div
+              key={name}
+              className="liquid-glass"
+              style={{
+                borderRadius: "0.75rem",
+                padding: "1rem",
+                textAlign: "center",
+                background: bg,
+                border: `1px solid ${color}30`,
+                transition: "all 0.2s ease",
+                cursor: "default",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+                (e.currentTarget as HTMLElement).style.borderColor = color;
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                (e.currentTarget as HTMLElement).style.borderColor = `${color}30`;
+              }}
+            >
+              <div
+                style={{
+                  width: "2rem",
+                  height: "2rem",
+                  borderRadius: "50%",
+                  background: color,
+                  margin: "0 auto 0.5rem",
+                  boxShadow: `0 0 20px ${color}50`,
+                }}
+              />
+              <span
+                style={{
+                  fontFamily: "'Barlow', sans-serif",
+                  fontSize: "0.75rem",
+                  fontWeight: 500,
+                  color: "rgba(255,255,255,0.9)",
+                }}
+              >
+                {name}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Feature Cards grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
             gap: "1.5rem",
           }}
         >

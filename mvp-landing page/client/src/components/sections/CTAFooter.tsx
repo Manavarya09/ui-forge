@@ -83,7 +83,7 @@ export default function CTAFooter() {
         <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", justifyContent: "center" }}>
           {/* Primary — liquid-glass-strong */}
           <a
-            href="https://github.com/Manavarya09/ui-forge"
+            href="https://www.npmjs.com/package/@manavarya0909/ui-forge-cli"
             target="_blank"
             rel="noopener noreferrer"
             className="liquid-glass-strong"
@@ -100,7 +100,7 @@ export default function CTAFooter() {
               textDecoration: "none",
             }}
           >
-            Install CLI
+            Install Free
             <ArrowUpRight size={16} strokeWidth={2} />
           </a>
 

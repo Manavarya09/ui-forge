@@ -346,7 +346,7 @@ export default function TemplateShowcase() {
                       color: "rgba(255,255,255,0.6)",
                     }}
                   >
-                    uiforge create {template.id}
+                    uiforge create {template.id} --style glass
                   </code>
                   <ArrowRight size={14} color="rgba(255,255,255,0.3)" />
                 </div>
@@ -378,7 +378,7 @@ export default function TemplateShowcase() {
             Or start from scratch with any template
           </p>
           <a
-            href="https://github.com/Manavarya09/ui-forge"
+            href="https://www.npmjs.com/package/@manavarya0909/ui-forge-cli"
             target="_blank"
             rel="noopener noreferrer"
             className="liquid-glass-strong"
@@ -402,7 +402,7 @@ export default function TemplateShowcase() {
               (e.currentTarget as HTMLElement).style.transform = "scale(1)";
             }}
           >
-            View All Templates
+            Get Started Free
             <ExternalLink size={16} />
           </a>
         </motion.div>
