@@ -1,0 +1,10 @@
+{
+  "name": "SaaS Modern",
+  "description": "Modern SaaS landing page with dashboard preview, bento grid, social proof, and pricing sections. Perfect for software products.",
+  "sections": ["hero", "dashboard-preview", "social-proof", "bento", "testimonials", "pricing", "faq", "cta", "footer"],
+  "tags": ["saas", "landing", "modern", "dashboard", "product"],
+  "colors": {
+    "primary": "hsl(239 84% 67%)",
+    "secondary": "hsl(269 76% 53%)"
+  }
+}

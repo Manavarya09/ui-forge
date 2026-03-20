@@ -1,0 +1,142 @@
+{
+  "personal": {
+    "name": "Muhammad Saad",
+    "title": "Software Engineer",
+    "greeting": "Hello, I'm",
+    "tagline": "I build accessible, pixel-perfect digital experiences.",
+    "specializations": ["ERPNext", "Flutter", "React Native", "Backend Integrations"],
+    "email": "muhammadsaadsafdar2005@gmail.com",
+    "github": "https://github.com/saadsafda",
+    "linkedin": "https://linkedin.com/in/muhammad-saad2005/",
+    "location": "Available for Remote Work",
+    "availability": "Open to morning opportunities",
+    "copyright": "© 2025 Muhammad Saad. All rights reserved."
+  },
+  "navigation": [
+    { "name": "About", "href": "#about" },
+    { "name": "Skills", "href": "#skills" },
+    { "name": "Experience", "href": "#experience" },
+    { "name": "Projects", "href": "#projects" },
+    { "name": "Contact", "href": "#contact" }
+  ],
+  "about": {
+    "sectionTitle": "About Me",
+    "heading": "Building real-world business solutions",
+    "paragraphs": [
+      "I am a software engineer with strong hands-on experience in ERPNext/Frappe development, mobile applications, and system integrations.",
+      "I work on real-world business solutions including payroll systems, HMRC RTI integrations, POS real-time systems, and data-driven mobile applications.",
+      "I prefer clean architecture, scalable solutions, and practical problem-solving."
+    ],
+    "highlights": ["clean architecture", "scalable solutions", "practical problem-solving"],
+    "stats": [
+      { "value": "5+", "label": "Years Experience" },
+      { "value": "20+", "label": "Projects Completed" },
+      { "value": "10+", "label": "Technologies" },
+      { "value": "100%", "label": "Client Satisfaction" }
+    ]
+  },
+  "skills": {
+    "sectionTitle": "Skills",
+    "heading": "Technologies I Work With",
+    "categories": [
+      {
+        "title": "Backend & ERP",
+        "skills": [
+          "ERPNext / Frappe Framework",
+          "Python",
+          "HMRC RTI (FPS, EPS, NVR, EYU)",
+          "UK Payroll Systems",
+          "REST APIs & Webhooks"
+        ]
+      },
+      {
+        "title": "Mobile Development",
+        "skills": ["Flutter", "React Native", "Socket.IO & TCP", "Maps & Location Tracking", "Background Services"]
+      },
+      {
+        "title": "Frontend",
+        "skills": ["React.js", "HTMX", "Data Tables & Forms", "Responsive Design", "UI/UX Implementation"]
+      },
+      {
+        "title": "Databases & Tools",
+        "skills": ["MySQL / MariaDB", "MongoDB", "Git", "Postman", "Windows & macOS"]
+      }
+    ]
+  },
+  "experience": {
+    "sectionTitle": "Experience",
+    "heading": "My Professional Journey",
+    "items": [
+      {
+        "type": "work",
+        "title": "Software Engineer",
+        "company": "Private Company",
+        "period": "Present",
+        "description": [
+          "Developed and customized ERPNext modules for HR, Payroll, Sales, and Inventory",
+          "Built a complete UK Payroll RTI solution integrated with HMRC",
+          "Designed Postman collections for RTI testing (TPVS, ETS, LTS)",
+          "Implemented permission logic, advanced filtering, and custom workflows in Frappe"
+        ]
+      },
+      {
+        "type": "education",
+        "title": "Computer Science Student",
+        "company": "University of Karachi",
+        "period": "Ongoing",
+        "description": ["Studying computer science fundamentals", "Building practical projects alongside coursework"]
+      }
+    ]
+  },
+  "projects": {
+    "sectionTitle": "Projects",
+    "heading": "Featured Work",
+    "items": [
+      {
+        "title": "UK Payroll RTI Integration",
+        "description": "Complete RTI application supporting FPS, EPS, NVR, and EYU. HMRC-compliant XML generation and submission with error handling and validation.",
+        "tags": ["ERPNext", "Python", "HMRC", "XML"],
+        "featured": true,
+        "github": "#",
+        "demo": "#"
+      },
+      {
+        "title": "Real-Time POS Order System",
+        "description": "Node.js TCP server with MongoDB. React Native TCP client for live order updates. Kitchen and table status synchronization.",
+        "tags": ["Node.js", "React Native", "MongoDB", "TCP"],
+        "featured": true,
+        "github": "#",
+        "demo": "#"
+      },
+      {
+        "title": "Smart Sales Manager",
+        "description": "Sales dashboard with analytics, customer and order management with secure login and role-based access.",
+        "tags": ["Flutter", "Firebase", "Analytics"],
+        "featured": true,
+        "github": "#",
+        "demo": "#"
+      },
+      {
+        "title": "Delivery & Map-Based Apps",
+        "description": "Live order tracking using flutter_map & geolocator. Draggable sheets with markers and order lists.",
+        "tags": ["Flutter", "Maps", "Geolocation"],
+        "featured": false,
+        "github": "#",
+        "demo": "#"
+      },
+      {
+        "title": "ERPNext Customizations",
+        "description": "Advanced search and filtering logic, role-based permissions for ESS and sales users, custom list pages and navigation.",
+        "tags": ["ERPNext", "Frappe", "Python"],
+        "featured": false,
+        "github": "#",
+        "demo": "#"
+      }
+    ]
+  },
+  "contact": {
+    "sectionTitle": "Contact",
+    "heading": "Let's Work Together",
+    "description": "I'm currently open to freelance and contract-based work. If you have a project in mind, let's talk!"
+  }
+}

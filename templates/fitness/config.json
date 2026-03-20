@@ -1,0 +1,10 @@
+{
+  "name": "Fitness",
+  "description": "Bold fitness and gym landing page with programs, schedule, and membership options. Perfect for gyms and fitness centers.",
+  "sections": ["hero", "marquee", "programs", "features", "schedule", "cta", "footer"],
+  "tags": ["fitness", "gym", "landing", "health", "sports"],
+  "colors": {
+    "primary": "hsl(0 84% 60%)",
+    "secondary": "hsl(25 95% 53%)"
+  }
+}

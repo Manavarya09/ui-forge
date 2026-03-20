@@ -1,0 +1,10 @@
+{
+  "name": "Real Estate",
+  "description": "Stunning real estate portfolio with 3D house visualization. Perfect for agents and property showcase.",
+  "sections": ["hero", "3d-house", "portfolio"],
+  "tags": ["real-estate", "portfolio", "3d", "property"],
+  "colors": {
+    "primary": "hsl(142 76% 45%)",
+    "secondary": "hsl(199 89% 48%)"
+  }
+}

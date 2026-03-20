@@ -1,0 +1,10 @@
+{
+  "name": "E-Commerce",
+  "description": "Full-featured e-commerce dashboard with cart management, product listings, and order tracking.",
+  "sections": ["dashboard", "cart", "products", "orders"],
+  "tags": ["ecommerce", "dashboard", "shop", "cart"],
+  "colors": {
+    "primary": "hsl(142 76% 45%)",
+    "secondary": "hsl(199 89% 48%)"
+  }
+}

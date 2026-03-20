@@ -10,11 +10,20 @@ const templates = [
   {
     id: "saas",
     name: "SaaS",
-    tagline: "Conversion-focused landing page",
+    tagline: "Conversion-focused landing",
     description: "Perfect for software products with pricing tables, testimonials, and hero sections optimized for conversions.",
     gradient: "from-indigo-500 to-purple-600",
     accent: "#6366f1",
     preview: "https://picsum.photos/seed/saas/600/400",
+  },
+  {
+    id: "saas-modern",
+    name: "SaaS Modern",
+    tagline: "Dashboard landing",
+    description: "Modern SaaS with dashboard preview, bento grid, and social proof. Built for software products.",
+    gradient: "from-blue-500 to-cyan-600",
+    accent: "#0ea5e9",
+    preview: "https://picsum.photos/seed/saasmod/600/400",
   },
   {
     id: "portfolio",
@@ -26,6 +35,15 @@ const templates = [
     preview: "https://picsum.photos/seed/portfolio/600/400",
   },
   {
+    id: "real-estate",
+    name: "Real Estate",
+    tagline: "3D property showcase",
+    description: "Stunning real estate portfolio with 3D house visualization. Perfect for property showcase.",
+    gradient: "from-teal-500 to-emerald-600",
+    accent: "#14b8a6",
+    preview: "https://picsum.photos/seed/realestate/600/400",
+  },
+  {
     id: "dashboard",
     name: "Dashboard",
     tagline: "Analytics interface",
@@ -35,13 +53,22 @@ const templates = [
     preview: "https://picsum.photos/seed/dashboard/600/400",
   },
   {
-    id: "marketplace",
-    name: "Marketplace",
-    tagline: "E-commerce platform",
-    description: "Multi-vendor marketplace with product grids, category filters, and shopping features.",
+    id: "ecommerce",
+    name: "E-Commerce",
+    tagline: "Shopping dashboard",
+    description: "Full-featured e-commerce dashboard with cart management and product listings.",
     gradient: "from-amber-500 to-orange-600",
     accent: "#f59e0b",
-    preview: "https://picsum.photos/seed/market/600/400",
+    preview: "https://picsum.photos/seed/ecommerce/600/400",
+  },
+  {
+    id: "fitness",
+    name: "Fitness",
+    tagline: "Gym landing page",
+    description: "Bold fitness and gym landing page with programs, schedule, and membership options.",
+    gradient: "from-red-500 to-orange-600",
+    accent: "#ef4444",
+    preview: "https://picsum.photos/seed/fitness/600/400",
   },
   {
     id: "agency",
@@ -53,6 +80,15 @@ const templates = [
     preview: "https://picsum.photos/seed/agency/600/400",
   },
   {
+    id: "tactical-dashboard",
+    name: "Tactical",
+    tagline: "Operations center",
+    description: "Military-inspired tactical operations dashboard with command center and system monitoring.",
+    gradient: "from-orange-500 to-red-600",
+    accent: "#f97316",
+    preview: "https://picsum.photos/seed/tactical/600/400",
+  },
+  {
     id: "ai-product",
     name: "AI Product",
     tagline: "Tech startup",
@@ -60,6 +96,24 @@ const templates = [
     gradient: "from-cyan-500 to-blue-600",
     accent: "#06b6d4",
     preview: "https://picsum.photos/seed/ai/600/400",
+  },
+  {
+    id: "marketplace",
+    name: "Marketplace",
+    tagline: "Multi-vendor",
+    description: "Multi-vendor marketplace with product grids, category filters, and shopping features.",
+    gradient: "from-yellow-500 to-amber-600",
+    accent: "#eab308",
+    preview: "https://picsum.photos/seed/market/600/400",
+  },
+  {
+    id: "premium-landing",
+    name: "Premium",
+    tagline: "Full-featured landing",
+    description: "Complete landing page with premium animations, all sections, and stunning effects.",
+    gradient: "from-purple-500 to-pink-600",
+    accent: "#a855f7",
+    preview: "https://picsum.photos/seed/premium/600/400",
   },
 ];
 
@@ -105,7 +159,7 @@ export default function TemplateShowcase() {
               lineHeight: "1.7",
             }}
           >
-            Six handcrafted templates. Each designed with premium animations, responsive layouts, and clean code.
+            Twelve handcrafted templates. Each designed with premium animations, responsive layouts, and clean code.
           </p>
         </div>
 

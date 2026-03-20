@@ -97,6 +97,46 @@ const AVAILABLE_TEMPLATES: TemplateConfigEntry[] = [
     tags: ['ai', 'product', 'modern'],
     color: '#06b6d4',
   },
+  {
+    id: 'saas-modern',
+    name: 'SaaS Modern',
+    description: 'Modern SaaS landing with dashboard preview, bento grid, social proof, and pricing sections',
+    sections: ['hero', 'dashboard-preview', 'social-proof', 'bento', 'testimonials', 'pricing', 'faq', 'cta', 'footer'],
+    tags: ['saas', 'landing', 'modern', 'dashboard'],
+    color: '#6366f1',
+  },
+  {
+    id: 'real-estate',
+    name: 'Real Estate',
+    description: 'Stunning real estate portfolio with 3D house visualization for property showcase',
+    sections: ['hero', '3d-house', 'portfolio'],
+    tags: ['real-estate', 'portfolio', '3d', 'property'],
+    color: '#22c55e',
+  },
+  {
+    id: 'ecommerce',
+    name: 'E-Commerce',
+    description: 'Full-featured e-commerce dashboard with cart management and product listings',
+    sections: ['dashboard', 'cart', 'products', 'orders'],
+    tags: ['ecommerce', 'dashboard', 'shop', 'cart'],
+    color: '#f59e0b',
+  },
+  {
+    id: 'fitness',
+    name: 'Fitness',
+    description: 'Bold fitness and gym landing page with programs, schedule, and membership options',
+    sections: ['hero', 'marquee', 'programs', 'features', 'schedule', 'cta', 'footer'],
+    tags: ['fitness', 'gym', 'landing', 'health'],
+    color: '#ef4444',
+  },
+  {
+    id: 'tactical-dashboard',
+    name: 'Tactical Dashboard',
+    description: 'Military-inspired tactical operations dashboard with command center and system monitoring',
+    sections: ['sidebar', 'command-center', 'agent-network', 'operations', 'intelligence', 'systems'],
+    tags: ['dashboard', 'tactical', 'operations', 'military'],
+    color: '#f97316',
+  },
 ];
 
 class TemplateRegistry {

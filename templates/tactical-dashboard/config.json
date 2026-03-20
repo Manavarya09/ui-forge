@@ -1,0 +1,10 @@
+{
+  "name": "Tactical Dashboard",
+  "description": "Military-inspired tactical operations dashboard with command center, agent network, and system monitoring. Dark, bold design.",
+  "sections": ["sidebar", "command-center", "agent-network", "operations", "intelligence", "systems"],
+  "tags": ["dashboard", "tactical", "operations", "military", "dark"],
+  "colors": {
+    "primary": "hsl(25 95% 53%)",
+    "secondary": "hsl(0 84% 60%)"
+  }
+}
