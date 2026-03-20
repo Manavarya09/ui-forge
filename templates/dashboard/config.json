@@ -1,0 +1,10 @@
+{
+  "name": "Dashboard",
+  "description": "Admin dashboard template with analytics and data tables",
+  "sections": ["navbar", "stats", "charts", "recent-activity", "top-products", "quick-actions"],
+  "tags": ["dashboard", "admin", "analytics", "saas"],
+  "colors": {
+    "primary": "hsl(221 83% 53%)",
+    "secondary": "hsl(262 83% 58%)"
+  }
+}
