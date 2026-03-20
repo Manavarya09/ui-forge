@@ -1,0 +1,50 @@
+{
+  "name": "uiforge",
+  "version": "0.1.0",
+  "description": "Production-grade CLI for generating premium UI systems with Next.js, Tailwind, and Framer Motion",
+  "type": "module",
+  "bin": {
+    "uiforge": "./dist/cli/index.js"
+  },
+  "scripts": {
+    "build": "tsc && npm run copy-templates",
+    "copy-templates": "cp -r templates dist/",
+    "watch": "tsc --watch",
+    "dev": "tsx cli/index.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "cli",
+    "ui",
+    "nextjs",
+    "tailwind",
+    "shadcn",
+    "ui-generator",
+    "framer-motion",
+    "react",
+    "landing-page"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/manavaryasingh/ui-forge"
+  },
+  "author": "Manav Arya Singh",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0",
+    "gradient-string": "^2.0.0",
+    "handlebars": "^4.7.8",
+    "inquirer": "^9.2.20",
+    "ora": "^8.1.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/handlebars": "^4.1.0",
+    "@types/inquirer": "^9.0.9",
+    "@types/node": "^20.14.0",
+    "tsx": "^4.15.0",
+    "typescript": "^5.4.5"
+  }
+}
