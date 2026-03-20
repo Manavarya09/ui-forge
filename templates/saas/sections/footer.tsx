@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
-import { Github, Twitter, Linkedin, Heart, Send } from 'lucide-react';
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
+import { Github, Twitter, Linkedin, Heart, Send } from "lucide-react";
 
 interface FooterLink {
   label: string;
@@ -16,47 +16,47 @@ interface FooterCategory {
 
 const footerLinks: FooterCategory[] = [
   {
-    title: 'Product',
+    title: "Product",
     links: [
-      { label: 'Features', href: '#features' },
-      { label: 'Pricing', href: '#pricing' },
-      { label: 'API Docs', href: '#' },
-      { label: 'Changelog', href: '#' },
+      { label: "Features", href: "#features" },
+      { label: "Pricing", href: "#pricing" },
+      { label: "API Docs", href: "#" },
+      { label: "Changelog", href: "#" },
     ],
   },
   {
-    title: 'Company',
+    title: "Company",
     links: [
-      { label: 'About', href: '#' },
-      { label: 'Blog', href: '#' },
-      { label: 'Careers', href: '#' },
-      { label: 'Contact', href: '#' },
+      { label: "About", href: "#" },
+      { label: "Blog", href: "#" },
+      { label: "Careers", href: "#" },
+      { label: "Contact", href: "#" },
     ],
   },
   {
-    title: 'Resources',
+    title: "Resources",
     links: [
-      { label: 'Community', href: '#' },
-      { label: 'Help Center', href: '#' },
-      { label: 'Templates', href: '#' },
-      { label: 'Status', href: '#' },
+      { label: "Community", href: "#" },
+      { label: "Help Center", href: "#" },
+      { label: "Templates", href: "#" },
+      { label: "Status", href: "#" },
     ],
   },
   {
-    title: 'Legal',
+    title: "Legal",
     links: [
-      { label: 'Privacy Policy', href: '#' },
-      { label: 'Terms of Service', href: '#' },
-      { label: 'Cookie Policy', href: '#' },
-      { label: 'Security', href: '#' },
+      { label: "Privacy Policy", href: "#" },
+      { label: "Terms of Service", href: "#" },
+      { label: "Cookie Policy", href: "#" },
+      { label: "Security", href: "#" },
     ],
   },
 ];
 
 const socialLinks = [
-  { icon: Github, href: '#', label: 'GitHub' },
-  { icon: Twitter, href: '#', label: 'Twitter' },
-  { icon: Linkedin, href: '#', label: 'LinkedIn' },
+  { icon: Github, href: "#", label: "GitHub" },
+  { icon: Twitter, href: "#", label: "Twitter" },
+  { icon: Linkedin, href: "#", label: "LinkedIn" },
 ];
 
 export default function Footer() {
@@ -73,11 +73,15 @@ export default function Footer() {
             transition={{ duration: 0.5 }}
             className="col-span-2"
           >
-            <a href="/" className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4 inline-block">
-              SaaSFast
+            <a
+              href="/"
+              className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4 inline-block"
+            >
+              UIForge
             </a>
             <p className="text-muted-foreground mb-6 max-w-xs">
-              Build, launch, and scale your SaaS product faster than ever. Join thousands of companies already growing with us.
+              Generate production-ready UI components in seconds. Build
+              beautiful, accessible interfaces with AI-powered tools.
             </p>
             <div className="flex gap-4">
               {socialLinks.map((social, index) => (
@@ -128,10 +132,15 @@ export default function Footer() {
           className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4"
         >
           <p className="text-sm text-muted-foreground">
-            © 2024 SaaSFast. All rights reserved.
+            © 2025 UIForge. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground flex items-center gap-1">
-            Made with <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by developers, for developers
+            Made with <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by
+            developers, for developers
+          </p>
+          <p className="text-sm text-muted-foreground flex items-center gap-1">
+            Made with <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by
+            developers, for developers
           </p>
         </motion.div>
       </div>

@@ -4,6 +4,7 @@ import {
   copyDir,
   getTemplatePath,
   fileExists,
+  readFile,
 } from "../utils/fs.js";
 import { logger } from "../utils/logger.js";
 import { registry, type Template, type TemplateFile } from "./registry.js";
@@ -17,6 +18,7 @@ import {
   designLanguageRegistry,
   type DesignLanguage,
 } from "../design-languages/registry.js";
+import { injector, availableSections } from "./injector.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -198,11 +200,43 @@ export class Generator {
     }
   }
 
-  async addSection(section: string, outputDir: string): Promise<void> {
+  async addSection(
+    sectionName: string,
+    outputDir: string,
+    position: "start" | "end" = "end"
+  ): Promise<void> {
+    const projectPath = path.resolve(outputDir);
+    const pagePath = path.join(projectPath, "app", "page.tsx");
+
+    if (!(await fileExists(pagePath))) {
+      throw new Error(
+        "No page.tsx found. Are you in a UIForge-generated project?"
+      );
+    }
+
+    const validSections = availableSections.map((s) => s.name);
+    if (!validSections.includes(sectionName)) {
+      throw new Error(
+        `Invalid section "${sectionName}". Available: ${validSections.join(", ")}`
+      );
+    }
+
     logger.header("Adding Section");
-    logger.step(1, 2, `Adding ${section} section`);
-    await this.sleep(300);
-    logger.success(`Section "${section}" added`);
+
+    const steps = [
+      `Creating ${sectionName} component`,
+      `Updating imports`,
+      `Injecting into page`,
+    ];
+
+    for (let i = 0; i < steps.length; i++) {
+      logger.step(i + 1, steps.length, steps[i]);
+      await this.sleep(250);
+    }
+
+    await injector.addSectionToProject(projectPath, sectionName, position);
+
+    logger.success(`Section "${sectionName}" added successfully`);
     logger.done();
   }
 

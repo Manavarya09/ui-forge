@@ -19,31 +19,121 @@ const __dirname = path.dirname(__filename);
 
 const program = new Command();
 
+const showHelp = () => {
+  logger.banner();
+  
+  console.log(chalk.bold.white("  ╭─────────────────────────────────────────────────────────────╮"));
+  console.log(chalk.bold.white("  │") + chalk.bold.cyan("  COMMANDS") + chalk.bold.white("                                                        " + chalk.bold.white("│")));
+  console.log(chalk.bold.white("  ╰─────────────────────────────────────────────────────────────╯"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("create") + " " + chalk.gray("[template]") + " " + chalk.cyan("[name]"));
+  console.log("    " + chalk.gray("Generate a new project from a template"));
+  console.log("    " + chalk.dim("Aliases:") + " " + chalk.green("c") + ", " + chalk.green("new"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("init"));
+  console.log("    " + chalk.gray("Initialize a new Next.js project with UIForge"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("preview") + " " + chalk.gray("[template]"));
+  console.log("    " + chalk.gray("Generate and preview a template in browser"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("demo"));
+  console.log("    " + chalk.gray("Generate a demo project for quick testing"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("list"));
+  console.log("    " + chalk.gray("List all available templates"));
+  console.log("    " + chalk.dim("Alias:") + " " + chalk.green("ls"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("styles"));
+  console.log("    " + chalk.gray("List all available design styles"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("deploy"));
+  console.log("    " + chalk.gray("Deploy your project to Vercel or Netlify"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("add") + " " + chalk.gray("<section>"));
+  console.log("    " + chalk.gray("Add a section to your existing project"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("theme") + " " + chalk.gray("[action]"));
+  console.log("    " + chalk.gray("Manage your design system (apply, list, generate)"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("ai") + " " + chalk.gray("<task>"));
+  console.log("    " + chalk.gray("AI-powered features (copy, generate, optimize)"));
+  console.log();
+  
+  console.log(chalk.bold.white("  ╭─────────────────────────────────────────────────────────────╮"));
+  console.log(chalk.bold.white("  │") + chalk.bold.cyan("  QUICK START") + chalk.bold.white("                                                      " + chalk.bold.white("│")));
+  console.log(chalk.bold.white("  ╰─────────────────────────────────────────────────────────────╯"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("→") + "  " + chalk.white("Interactive mode:") + "  " + chalk.green("npx uiforge create"));
+  console.log("  " + chalk.cyan("→") + "  " + chalk.white("Direct creation:") + "   " + chalk.green("npx uiforge create saas my-app"));
+  console.log("  " + chalk.cyan("→") + "  " + chalk.white("With style:") + "        " + chalk.green("npx uiforge create saas my-app --style glass"));
+  console.log();
+  
+  console.log(chalk.bold.white("  ╭─────────────────────────────────────────────────────────────╮"));
+  console.log(chalk.bold.white("  │") + chalk.bold.cyan("  OPTIONS") + chalk.bold.white("                                                          " + chalk.bold.white("│")));
+  console.log(chalk.bold.white("  ╰─────────────────────────────────────────────────────────────╯"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("-n, --name") + " " + chalk.gray("<name>"));
+  console.log("    " + chalk.gray("Project name (default: my-app)"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("-o, --output") + " " + chalk.gray("<dir>"));
+  console.log("    " + chalk.gray("Output directory (default: current directory)"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("--style") + " " + chalk.gray("<style>"));
+  console.log("    " + chalk.gray("Design style: minimal, glass, brutalism, enterprise,"));
+  console.log("    " + chalk.gray("                       bento, neumorphism, flat, material,"));
+  console.log("    " + chalk.gray("                       dark-minimal, tech-futurism, monochrome, swiss"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("--install"));
+  console.log("    " + chalk.gray("Auto-install dependencies after generation"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("--git"));
+  console.log("    " + chalk.gray("Initialize git repository"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("-i, --interactive"));
+  console.log("    " + chalk.gray("Interactive selection mode"));
+  console.log();
+  
+  console.log();
+  console.log("  " + chalk.gray("Need help? Visit:") + " " + chalk.cyan("https://github.com/anomalyco/ui-forge"));
+  console.log("  " + chalk.gray("Report issues:") + "  " + chalk.cyan("https://github.com/anomalyco/ui-forge/issues"));
+  console.log();
+};
+
 program
   .name("uiforge")
-  .description(
-    `
-╔══════════════════════════════════════════════════════════════╗
-║                    UIForge CLI v1.0.0                        ║
-║           Generate production-grade UI in seconds              ║
-╚══════════════════════════════════════════════════════════════╝
-
-  Quick Start:
-    npx uiforge create                    # Interactive selection
-    npx uiforge create saas my-app       # Direct creation
-    npx uiforge create --interactive      # Interactive mode
-`,
-  )
+  .description("")
   .version("1.0.0");
+
+program.on("--help", () => {
+  showHelp();
+});
 
 program
   .command("init")
+  .alias("i")
   .description("Initialize a new Next.js project")
   .option("-n, --name <name>", "Project name", "my-app")
   .option("-o, --output <dir>", "Output directory", ".")
   .option("--git", "Initialize git repository", false)
   .action(async (options) => {
-    logger.logo();
+    logger.banner();
 
     try {
       const spinner = logger.startSpinner("Initializing project...");

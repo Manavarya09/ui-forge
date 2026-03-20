@@ -1,12 +1,51 @@
 import chalk from 'chalk';
+// @ts-ignore - gradient-string has no types
 import gradient from 'gradient-string';
 import ora, { type Ora } from 'ora';
 
 const theme = {
   primary: gradient(['#6366f1', '#8b5cf6', '#a855f7']),
+  secondary: gradient(['#22c55e', '#16a34a']),
   success: gradient(['#22c55e', '#16a34a']),
   error: gradient(['#ef4444', '#dc2626']),
+  rainbow: gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee']),
+  fire: gradient(['#f97316', '#ef4444', '#dc2626']),
+  cyber: gradient(['#06b6d4', '#3b82f6', '#8b5cf6']),
 };
+
+const asciiLogo = `
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ╔═══════════════════════════════════════════════════════════╗')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ║')}  ${chalk.white('██╗   ██╗██╗ ██████╗████████╗ ██████╗ ██████╗ ██╗   ██╗')}  ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ║')}  ${chalk.white('██║   ██║██║██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝')}  ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ║')}  ${chalk.white('██║   ██║██║██║        ██║   ██║   ██║██████╔╝ ╚████╔╝')}  ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ║')}  ${chalk.white('╚██╗ ██╔╝██║██║        ██║   ██║   ██║██╔══██╗  ╚██╔╝')}  ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ║')}  ${chalk.white(' ╚████╔╝ ██║╚██████╗   ██║   ╚██████╔╝██║  ██║   ██║')}  ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ║')}  ${chalk.white('  ╚═══╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝')}  ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ╚═══════════════════════════════════════════════════════════╝')}
+`;
+
+const miniLogo = `
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('  ╔══════════════════════════════════════╗')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('  ║')}  ${chalk.bold.white('UIForge')} ${chalk.gray('v1.0')}  ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('  ║')}  ${chalk.gray('Premium UI Generator')}             ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('  ╚══════════════════════════════════════╝')}
+`;
+
+const coolBanner = `
+${chalk.cyan('    ┌─────────────────────────────────────────────────────────────┐')}
+${chalk.cyan('    │')}                                                             ${chalk.cyan('│')}
+${chalk.cyan('    │')}   ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])('██╗   ██╗██╗ ██████╗████████╗ ██████╗ ██████╗ ██╗   ██╗')}   ${chalk.cyan('│')}
+${chalk.cyan('    │')}   ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])('██║   ██║██║██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝')}   ${chalk.cyan('│')}
+${chalk.cyan('    │')}   ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])('██║   ██║██║██║        ██║   ██║   ██║██████╔╝ ╚████╔╝')}   ${chalk.cyan('│')}
+${chalk.cyan('    │')}   ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])('╚██╗ ██╔╝██║██║        ██║   ██║   ██║██╔══██╗  ╚██╔╝')}   ${chalk.cyan('│')}
+${chalk.cyan('    │')}   ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])(' ╚████╔╝ ██║╚██████╗   ██║   ╚██████╔╝██║  ██║   ██║')}   ${chalk.cyan('│')}
+${chalk.cyan('    │')}   ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])('  ╚═══╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝')}   ${chalk.cyan('│')}
+${chalk.cyan('    │')}                                                             ${chalk.cyan('│')}
+${chalk.cyan('    │')}   ${chalk.white('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')}   ${chalk.cyan('│')}
+${chalk.cyan('    │')}   ${chalk.gray('          Build stunning UIs in seconds, not days')}           ${chalk.cyan('│')}
+${chalk.cyan('    │')}                                                             ${chalk.cyan('│')}
+${chalk.cyan('    └─────────────────────────────────────────────────────────────┘')}
+`;
 
 interface Step {
   name: string;
@@ -89,10 +128,19 @@ const progressTracker = new ProgressTracker();
 export const logger = {
   logo: () => {
     console.log();
-    console.log(theme.primary('  ╔═══════════════════════════════════════════════════╗'));
-    console.log(theme.primary('  ║') + '   ' + chalk.bold.white('UIForge') + ' ' + chalk.gray('v1.0') + ' '.repeat(31) + theme.primary('║'));
-    console.log(theme.primary('  ║') + '   ' + chalk.gray('Premium UI Generation CLI') + ' '.repeat(20) + theme.primary('║'));
-    console.log(theme.primary('  ╚═══════════════════════════════════════════════════╝'));
+    console.log(asciiLogo);
+    console.log();
+  },
+
+  miniLogo: () => {
+    console.log();
+    console.log(miniLogo);
+    console.log();
+  },
+
+  banner: () => {
+    console.log();
+    console.log(coolBanner);
     console.log();
   },
 
@@ -224,4 +272,8 @@ export const logger = {
   },
 
   progress: progressTracker,
+  
+  theme: theme as Record<string, any>,
+  asciiLogo,
+  coolBanner,
 };
