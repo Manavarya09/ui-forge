@@ -1,11 +1,24 @@
-import { writeFile, ensureDir, copyDir, getTemplatePath, fileExists } from '../utils/fs.js';
-import { logger } from '../utils/logger.js';
-import { registry, type Template, type TemplateFile } from './registry.js';
-import { generateTailwindConfig, generateCSSVariables } from '../design-system/tailwind-generator.js';
-import { defaultTokens } from '../design-system/tokens.js';
-import { aiManager } from './registry.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import {
+  writeFile,
+  ensureDir,
+  copyDir,
+  getTemplatePath,
+  fileExists,
+} from "../utils/fs.js";
+import { logger } from "../utils/logger.js";
+import { registry, type Template, type TemplateFile } from "./registry.js";
+import {
+  generateTailwindConfig,
+  generateCSSVariables,
+} from "../design-system/tailwind-generator.js";
+import { defaultTokens } from "../design-system/tokens.js";
+import { aiManager } from "./registry.js";
+import {
+  designLanguageRegistry,
+  type DesignLanguage,
+} from "../design-languages/registry.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,6 +32,7 @@ export interface GenerationOptions {
   darkMode?: boolean;
   primaryColor?: string;
   font?: string;
+  style?: string;
 }
 
 export interface GeneratedCopy {
@@ -32,16 +46,16 @@ export interface GeneratedCopy {
 export class Generator {
   async initProject(options: GenerationOptions): Promise<void> {
     const { projectName, outputDir } = options;
-    
-    logger.header('Initializing Project');
-    
+
+    logger.header("Initializing Project");
+
     const steps = [
-      'Creating project structure',
-      'Setting up package.json',
-      'Configuring TypeScript',
-      'Configuring Tailwind CSS',
-      'Setting up shadcn/ui',
-      'Creating base components',
+      "Creating project structure",
+      "Setting up package.json",
+      "Configuring TypeScript",
+      "Configuring Tailwind CSS",
+      "Setting up shadcn/ui",
+      "Creating base components",
     ];
 
     for (let i = 0; i < steps.length; i++) {
@@ -51,350 +65,440 @@ export class Generator {
 
     await this.createNextJSProject(projectName, outputDir);
     await this.setupShadcn(outputDir);
-    
+
     logger.done();
   }
 
   async createTemplate(options: GenerationOptions): Promise<void> {
     const template = registry.get(options.template);
-    
+
     if (!template) {
       throw new Error(`Template "${options.template}" not found`);
     }
-    
+
+    const styleName = options.style || "minimal";
+    let designLanguage: DesignLanguage;
+
+    const styleExists = await designLanguageRegistry.styleExists(styleName);
+    if (styleExists) {
+      designLanguage = (await designLanguageRegistry.getStyle(styleName))!;
+    } else {
+      designLanguage = await designLanguageRegistry.getDefaultStyle();
+    }
+
     const sections = options.sections || template.sections;
     const outputPath = path.join(options.outputDir, options.projectName);
-    
+
     await this.createFullProject(options.projectName, outputPath);
 
     const cliDir = path.dirname(__dirname);
     const projectRoot = path.dirname(cliDir);
-    const sourceTemplatePath = path.join(projectRoot, 'templates', options.template);
+    const sourceTemplatePath = path.join(
+      projectRoot,
+      "templates",
+      options.template,
+    );
     const templateExists = await fileExists(sourceTemplatePath);
 
     let generatedCopy: GeneratedCopy | null = null;
 
     if (options.useAI) {
-      logger.info('Generating AI-powered copy...');
+      logger.info("Generating AI-powered copy...");
       const provider = await aiManager.initialize();
       if (provider) {
         const templateContext = `Generate marketing copy for a ${template.name.toLowerCase()} website`;
         const result = await provider.generateCopy(templateContext);
-        
+
         if (result.success) {
           generatedCopy = this.parseGeneratedCopy(result.content);
-          logger.success('AI-powered copy generated');
+          logger.success("AI-powered copy generated");
         } else {
-          logger.warning('AI generation failed, using default copy');
+          logger.warning("AI generation failed, using default copy");
         }
       }
     }
 
     if (templateExists) {
-      const { default: fsExtra } = await import('fs-extra');
-      await fsExtra.copy(sourceTemplatePath, path.join(outputPath, 'app'));
+      const { default: fsExtra } = await import("fs-extra");
+      await fsExtra.copy(sourceTemplatePath, path.join(outputPath, "app"));
       logger.success(`Template copied`);
-      
+
       if (generatedCopy) {
         await this.injectAICopy(outputPath, generatedCopy);
       }
     } else {
-      await this.generateFromRegistry(template, outputPath, sections, generatedCopy);
+      await this.generateFromRegistry(
+        template,
+        outputPath,
+        sections,
+        generatedCopy,
+      );
     }
 
-    await this.generateDesignSystem(outputPath);
+    await this.generateDesignSystem(outputPath, designLanguage);
   }
 
   private parseGeneratedCopy(content: string): GeneratedCopy {
-    const lines = content.split('\n').filter(l => l.trim());
-    
+    const lines = content.split("\n").filter((l) => l.trim());
+
     return {
-      heroTitle: lines[0]?.replace(/^#?\s*/, '').trim() || 'Build Something Amazing',
-      heroSubtitle: lines[1]?.replace(/^#?\s*/, '').trim() || 'The modern platform for building and scaling your product.',
-      ctaText: lines.find(l => l.toLowerCase().includes('get started') || l.toLowerCase().includes('start'))?.replace(/^#?\s*/, '').trim() || 'Get Started',
-      featuresTitle: lines.find(l => l.toLowerCase().includes('feature'))?.replace(/^#?\s*/, '').trim() || 'Features',
-      pricingTitle: lines.find(l => l.toLowerCase().includes('pricing') || l.toLowerCase().includes('price'))?.replace(/^#?\s*/, '').trim() || 'Pricing',
+      heroTitle:
+        lines[0]?.replace(/^#?\s*/, "").trim() || "Build Something Amazing",
+      heroSubtitle:
+        lines[1]?.replace(/^#?\s*/, "").trim() ||
+        "The modern platform for building and scaling your product.",
+      ctaText:
+        lines
+          .find(
+            (l) =>
+              l.toLowerCase().includes("get started") ||
+              l.toLowerCase().includes("start"),
+          )
+          ?.replace(/^#?\s*/, "")
+          .trim() || "Get Started",
+      featuresTitle:
+        lines
+          .find((l) => l.toLowerCase().includes("feature"))
+          ?.replace(/^#?\s*/, "")
+          .trim() || "Features",
+      pricingTitle:
+        lines
+          .find(
+            (l) =>
+              l.toLowerCase().includes("pricing") ||
+              l.toLowerCase().includes("price"),
+          )
+          ?.replace(/^#?\s*/, "")
+          .trim() || "Pricing",
     };
   }
 
-  private async injectAICopy(outputPath: string, copy: GeneratedCopy): Promise<void> {
-    const pagePath = path.join(outputPath, 'app', 'page.tsx');
+  private async injectAICopy(
+    outputPath: string,
+    copy: GeneratedCopy,
+  ): Promise<void> {
+    const pagePath = path.join(outputPath, "app", "page.tsx");
     const pageExists = await fileExists(pagePath);
-    
+
     if (pageExists) {
-      const { readFile } = await import('fs/promises');
-      let content = await readFile(pagePath, 'utf-8');
-      
+      const { readFile } = await import("fs/promises");
+      let content = await readFile(pagePath, "utf-8");
+
       content = content.replace(
         /Build Something Amazing|Build Amazing Products|Build [\w\s]+/,
-        copy.heroTitle
+        copy.heroTitle,
       );
       content = content.replace(
         /Create stunning[^"]*|The modern platform[^"]*/,
-        copy.heroSubtitle
+        copy.heroSubtitle,
       );
-      
+
       await writeFile(pagePath, content);
-      logger.success('AI copy injected into template');
+      logger.success("AI copy injected into template");
     }
   }
 
   async addSection(section: string, outputDir: string): Promise<void> {
-    logger.header('Adding Section');
+    logger.header("Adding Section");
     logger.step(1, 2, `Adding ${section} section`);
     await this.sleep(300);
     logger.success(`Section "${section}" added`);
     logger.done();
   }
 
-  async generateDesignSystem(outputDir: string): Promise<void> {
-    const tailwindPath = path.join(outputDir, 'tailwind.config.ts');
-    const cssPath = path.join(outputDir, 'app', 'globals.css');
+  async generateDesignSystem(
+    outputDir: string,
+    designLanguage?: DesignLanguage,
+  ): Promise<void> {
+    const tailwindPath = path.join(outputDir, "tailwind.config.ts");
+    const cssPath = path.join(outputDir, "app", "globals.css");
 
-    await writeFile(tailwindPath, generateTailwindConfig(defaultTokens));
-    await writeFile(cssPath, generateCSSVariables(defaultTokens));
-    
-    logger.success('Design system generated');
+    if (designLanguage) {
+      const { generateStyleTailwindConfig, generateStyleCSSVariables } =
+        designLanguageRegistry;
+      await writeFile(
+        tailwindPath,
+        generateStyleTailwindConfig(designLanguage),
+      );
+      await writeFile(cssPath, generateStyleCSSVariables(designLanguage));
+      logger.success(`Design system generated (${designLanguage.name} style)`);
+    } else {
+      await writeFile(tailwindPath, generateTailwindConfig(defaultTokens));
+      await writeFile(cssPath, generateCSSVariables(defaultTokens));
+      logger.success("Design system generated");
+    }
   }
 
-  private async createNextJSProject(projectName: string, outputDir: string): Promise<void> {
+  private async createNextJSProject(
+    projectName: string,
+    outputDir: string,
+  ): Promise<void> {
     const projectPath = path.join(outputDir, projectName);
     await ensureDir(projectPath);
-    await ensureDir(path.join(projectPath, 'app'));
-    await ensureDir(path.join(projectPath, 'components', 'ui'));
-    await ensureDir(path.join(projectPath, 'lib'));
-    await ensureDir(path.join(projectPath, 'public'));
+    await ensureDir(path.join(projectPath, "app"));
+    await ensureDir(path.join(projectPath, "components", "ui"));
+    await ensureDir(path.join(projectPath, "lib"));
+    await ensureDir(path.join(projectPath, "public"));
 
     const packageJson = {
       name: projectName,
-      version: '0.1.0',
+      version: "0.1.0",
       private: true,
       scripts: {
-        dev: 'next dev',
-        build: 'next build',
-        start: 'next start',
-        lint: 'next lint',
+        dev: "next dev",
+        build: "next build",
+        start: "next start",
+        lint: "next lint",
       },
       dependencies: {
-        next: '^14.2.0',
-        react: '^18.3.0',
-        'react-dom': '^18.3.0',
-        'framer-motion': '^11.0.0',
-        'clsx': '^2.1.0',
-        'tailwind-merge': '^2.3.0',
-        'class-variance-authority': '^0.7.0',
-        '@radix-ui/react-slot': '^1.0.2',
-        'lucide-react': '^0.400.0',
+        next: "^14.2.0",
+        react: "^18.3.0",
+        "react-dom": "^18.3.0",
+        "framer-motion": "^11.0.0",
+        clsx: "^2.1.0",
+        "tailwind-merge": "^2.3.0",
+        "class-variance-authority": "^0.7.0",
+        "@radix-ui/react-slot": "^1.0.2",
+        "lucide-react": "^0.400.0",
       },
       devDependencies: {
-        typescript: '^5.4.0',
-        '@types/node': '^20.0.0',
-        '@types/react': '^18.3.0',
-        '@types/react-dom': '^18.3.0',
-        autoprefixer: '^10.4.0',
-        postcss: '^8.4.0',
-        tailwindcss: '^3.4.0',
-        'tailwindcss-animate': '^1.0.7',
-        eslint: '^8.0.0',
-        'eslint-config-next': '^14.2.0',
+        typescript: "^5.4.0",
+        "@types/node": "^20.0.0",
+        "@types/react": "^18.3.0",
+        "@types/react-dom": "^18.3.0",
+        autoprefixer: "^10.4.0",
+        postcss: "^8.4.0",
+        tailwindcss: "^3.4.0",
+        "tailwindcss-animate": "^1.0.7",
+        eslint: "^8.0.0",
+        "eslint-config-next": "^14.2.0",
       },
     };
 
     await writeFile(
-      path.join(projectPath, 'package.json'),
-      JSON.stringify(packageJson, null, 2)
+      path.join(projectPath, "package.json"),
+      JSON.stringify(packageJson, null, 2),
     );
 
     await writeFile(
-      path.join(projectPath, 'tsconfig.json'),
-      JSON.stringify({
-        compilerOptions: {
-          target: 'ES2017',
-          lib: ['dom', 'dom.iterable', 'esnext'],
-          allowJs: true,
-          skipLibCheck: true,
-          strict: true,
-          noEmit: true,
-          esModuleInterop: true,
-          module: 'esnext',
-          moduleResolution: 'bundler',
-          resolveJsonModule: true,
-          isolatedModules: true,
-          jsx: 'preserve',
-          incremental: true,
-          plugins: [{ name: 'next' }],
-          paths: { '@/*': ['./*'] },
+      path.join(projectPath, "tsconfig.json"),
+      JSON.stringify(
+        {
+          compilerOptions: {
+            target: "ES2017",
+            lib: ["dom", "dom.iterable", "esnext"],
+            allowJs: true,
+            skipLibCheck: true,
+            strict: true,
+            noEmit: true,
+            esModuleInterop: true,
+            module: "esnext",
+            moduleResolution: "bundler",
+            resolveJsonModule: true,
+            isolatedModules: true,
+            jsx: "preserve",
+            incremental: true,
+            plugins: [{ name: "next" }],
+            paths: { "@/*": ["./*"] },
+          },
+          include: [
+            "next-env.d.ts",
+            "**/*.ts",
+            "**/*.tsx",
+            ".next/types/**/*.ts",
+          ],
+          exclude: ["node_modules"],
         },
-        include: ['next-env.d.ts', '**/*.ts', '**/*.tsx', '.next/types/**/*.ts'],
-        exclude: ['node_modules'],
-      }, null, 2)
+        null,
+        2,
+      ),
     );
 
     await writeFile(
-      path.join(projectPath, 'next.config.mjs'),
+      path.join(projectPath, "next.config.mjs"),
       `/** @type {import('next').NextConfig} */
 const nextConfig = {};
 
-export default nextConfig;`
+export default nextConfig;`,
     );
 
     await writeFile(
-      path.join(projectPath, 'postcss.config.mjs'),
+      path.join(projectPath, "postcss.config.mjs"),
       `export default {
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
   },
-};`
+};`,
     );
   }
 
-  private async createFullProject(projectName: string, projectPath: string): Promise<void> {
+  private async createFullProject(
+    projectName: string,
+    projectPath: string,
+  ): Promise<void> {
     await ensureDir(projectPath);
-    await ensureDir(path.join(projectPath, 'app'));
-    await ensureDir(path.join(projectPath, 'app', 'sections'));
-    await ensureDir(path.join(projectPath, 'components', 'ui'));
-    await ensureDir(path.join(projectPath, 'lib'));
-    await ensureDir(path.join(projectPath, 'public'));
+    await ensureDir(path.join(projectPath, "app"));
+    await ensureDir(path.join(projectPath, "app", "sections"));
+    await ensureDir(path.join(projectPath, "components", "ui"));
+    await ensureDir(path.join(projectPath, "lib"));
+    await ensureDir(path.join(projectPath, "public"));
 
     const packageJson = {
       name: projectName,
-      version: '0.1.0',
+      version: "0.1.0",
       private: true,
       scripts: {
-        dev: 'next dev',
-        build: 'next build',
-        start: 'next start',
-        lint: 'next lint',
+        dev: "next dev",
+        build: "next build",
+        start: "next start",
+        lint: "next lint",
       },
       dependencies: {
-        next: '^14.2.0',
-        react: '^18.3.0',
-        'react-dom': '^18.3.0',
-        'framer-motion': '^11.0.0',
-        'clsx': '^2.1.0',
-        'tailwind-merge': '^2.3.0',
-        'class-variance-authority': '^0.7.0',
-        '@radix-ui/react-slot': '^1.0.2',
-        'lucide-react': '^0.400.0',
+        next: "^14.2.0",
+        react: "^18.3.0",
+        "react-dom": "^18.3.0",
+        "framer-motion": "^11.0.0",
+        clsx: "^2.1.0",
+        "tailwind-merge": "^2.3.0",
+        "class-variance-authority": "^0.7.0",
+        "@radix-ui/react-slot": "^1.0.2",
+        "lucide-react": "^0.400.0",
       },
       devDependencies: {
-        typescript: '^5.4.0',
-        '@types/node': '^20.0.0',
-        '@types/react': '^18.3.0',
-        '@types/react-dom': '^18.3.0',
-        autoprefixer: '^10.4.0',
-        postcss: '^8.4.0',
-        tailwindcss: '^3.4.0',
-        'tailwindcss-animate': '^1.0.7',
-        eslint: '^8.0.0',
-        'eslint-config-next': '^14.2.0',
+        typescript: "^5.4.0",
+        "@types/node": "^20.0.0",
+        "@types/react": "^18.3.0",
+        "@types/react-dom": "^18.3.0",
+        autoprefixer: "^10.4.0",
+        postcss: "^8.4.0",
+        tailwindcss: "^3.4.0",
+        "tailwindcss-animate": "^1.0.7",
+        eslint: "^8.0.0",
+        "eslint-config-next": "^14.2.0",
       },
     };
 
     await writeFile(
-      path.join(projectPath, 'package.json'),
-      JSON.stringify(packageJson, null, 2)
+      path.join(projectPath, "package.json"),
+      JSON.stringify(packageJson, null, 2),
     );
 
     await writeFile(
-      path.join(projectPath, 'tsconfig.json'),
-      JSON.stringify({
-        compilerOptions: {
-          target: 'ES2017',
-          lib: ['dom', 'dom.iterable', 'esnext'],
-          allowJs: true,
-          skipLibCheck: true,
-          strict: true,
-          noEmit: true,
-          esModuleInterop: true,
-          module: 'esnext',
-          moduleResolution: 'bundler',
-          resolveJsonModule: true,
-          isolatedModules: true,
-          jsx: 'preserve',
-          incremental: true,
-          plugins: [{ name: 'next' }],
-          paths: { '@/*': ['./*'] },
+      path.join(projectPath, "tsconfig.json"),
+      JSON.stringify(
+        {
+          compilerOptions: {
+            target: "ES2017",
+            lib: ["dom", "dom.iterable", "esnext"],
+            allowJs: true,
+            skipLibCheck: true,
+            strict: true,
+            noEmit: true,
+            esModuleInterop: true,
+            module: "esnext",
+            moduleResolution: "bundler",
+            resolveJsonModule: true,
+            isolatedModules: true,
+            jsx: "preserve",
+            incremental: true,
+            plugins: [{ name: "next" }],
+            paths: { "@/*": ["./*"] },
+          },
+          include: [
+            "next-env.d.ts",
+            "**/*.ts",
+            "**/*.tsx",
+            ".next/types/**/*.ts",
+          ],
+          exclude: ["node_modules"],
         },
-        include: ['next-env.d.ts', '**/*.ts', '**/*.tsx', '.next/types/**/*.ts'],
-        exclude: ['node_modules'],
-      }, null, 2)
+        null,
+        2,
+      ),
     );
 
     await writeFile(
-      path.join(projectPath, 'next.config.mjs'),
+      path.join(projectPath, "next.config.mjs"),
       `/** @type {import('next').NextConfig} */
 const nextConfig = {};
 
-export default nextConfig;`
+export default nextConfig;`,
     );
 
     await writeFile(
-      path.join(projectPath, 'postcss.config.mjs'),
+      path.join(projectPath, "postcss.config.mjs"),
       `export default {
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
   },
-};`
+};`,
     );
 
     await writeFile(
-      path.join(projectPath, 'lib', 'utils.ts'),
+      path.join(projectPath, "lib", "utils.ts"),
       `import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-`
+`,
     );
 
     await writeFile(
-      path.join(projectPath, 'components.json'),
-      JSON.stringify({
-        $schema: 'https://ui.shadcn.com/schema.json',
-        style: 'default',
-        rsc: true,
-        tsx: true,
-        tailwind: {
-          config: 'tailwind.config.ts',
-          css: 'app/globals.css',
-          baseColor: 'slate',
-          cssVariables: true,
+      path.join(projectPath, "components.json"),
+      JSON.stringify(
+        {
+          $schema: "https://ui.shadcn.com/schema.json",
+          style: "default",
+          rsc: true,
+          tsx: true,
+          tailwind: {
+            config: "tailwind.config.ts",
+            css: "app/globals.css",
+            baseColor: "slate",
+            cssVariables: true,
+          },
+          aliases: {
+            components: "@/components",
+            utils: "@/lib/utils",
+          },
         },
-        aliases: {
-          components: '@/components',
-          utils: '@/lib/utils',
-        },
-      }, null, 2)
+        null,
+        2,
+      ),
     );
   }
 
   private async setupShadcn(outputDir: string): Promise<void> {
-    const componentsPath = path.join(outputDir, 'components.json');
-    const utilsPath = path.join(outputDir, 'lib', 'utils.ts');
+    const componentsPath = path.join(outputDir, "components.json");
+    const utilsPath = path.join(outputDir, "lib", "utils.ts");
 
     await writeFile(
       componentsPath,
-      JSON.stringify({
-        $schema: 'https://ui.shadcn.com/schema.json',
-        style: 'default',
-        rsc: true,
-        tsx: true,
-        tailwind: {
-          config: 'tailwind.config.ts',
-          css: 'app/globals.css',
-          baseColor: 'slate',
-          cssVariables: true,
-          prefix: '',
+      JSON.stringify(
+        {
+          $schema: "https://ui.shadcn.com/schema.json",
+          style: "default",
+          rsc: true,
+          tsx: true,
+          tailwind: {
+            config: "tailwind.config.ts",
+            css: "app/globals.css",
+            baseColor: "slate",
+            cssVariables: true,
+            prefix: "",
+          },
+          aliases: {
+            components: "@/components",
+            utils: "@/lib/utils",
+          },
         },
-        aliases: {
-          components: '@/components',
-          utils: '@/lib/utils',
-        },
-      }, null, 2)
+        null,
+        2,
+      ),
     );
 
     await writeFile(
@@ -405,7 +509,7 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-`
+`,
     );
   }
 
@@ -413,15 +517,15 @@ export function cn(...inputs: ClassValue[]) {
     template: Template,
     outputPath: string,
     sections: string[],
-    generatedCopy?: GeneratedCopy | null
+    generatedCopy?: GeneratedCopy | null,
   ): Promise<void> {
     for (const file of template.files) {
       await writeFile(path.join(outputPath, file.path), file.content);
     }
 
     await writeFile(
-      path.join(outputPath, 'app', 'layout.tsx'),
-      this.generateLayoutComponent()
+      path.join(outputPath, "app", "layout.tsx"),
+      this.generateLayoutComponent(),
     );
 
     const sectionComponents: Record<string, string> = {
@@ -438,15 +542,15 @@ export function cn(...inputs: ClassValue[]) {
       const component = sectionComponents[section];
       if (component) {
         await writeFile(
-          path.join(outputPath, 'app', 'sections', `${section}.tsx`),
-          component
+          path.join(outputPath, "app", "sections", `${section}.tsx`),
+          component,
         );
       }
     }
 
     await writeFile(
-      path.join(outputPath, 'app', 'page.tsx'),
-      this.generatePageComponent(sections)
+      path.join(outputPath, "app", "page.tsx"),
+      this.generatePageComponent(sections),
     );
   }
 
@@ -484,11 +588,11 @@ export default function RootLayout({
   private generatePageComponent(sections: string[]): string {
     const imports = sections
       .map((s) => `import ${this.toPascalCase(s)} from "./sections/${s}"`)
-      .join('\n');
+      .join("\n");
 
     const components = sections
       .map((s) => `      <${this.toPascalCase(s)} />`)
-      .join('\n');
+      .join("\n");
 
     return `${imports}
 
@@ -504,16 +608,20 @@ ${components}
 
   private toPascalCase(str: string): string {
     return str
-      .split('-')
+      .split("-")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join('');
+      .join("");
   }
 
   private generateHeroSection(copy?: GeneratedCopy | null): string {
-    const title = copy?.heroTitle || 'Build <span className="text-gradient">Amazing</span> Products';
-    const subtitle = copy?.heroSubtitle || 'Create stunning, production-ready interfaces with ease. The modern way to build beautiful web applications.';
-    const cta = copy?.ctaText || 'Get Started';
-    
+    const title =
+      copy?.heroTitle ||
+      'Build <span className="text-gradient">Amazing</span> Products';
+    const subtitle =
+      copy?.heroSubtitle ||
+      "Create stunning, production-ready interfaces with ease. The modern way to build beautiful web applications.";
+    const cta = copy?.ctaText || "Get Started";
+
     return `import { motion } from 'framer-motion';
 
 export default function Hero() {
@@ -566,7 +674,7 @@ export default function Hero() {
   }
 
   private generateFeaturesSection(copy?: GeneratedCopy | null): string {
-    const featuresTitle = copy?.featuresTitle || 'Features';
+    const featuresTitle = copy?.featuresTitle || "Features";
     return `import { motion } from 'framer-motion';
 
 const features = [
@@ -718,7 +826,7 @@ export default function Testimonials() {
   }
 
   private generatePricingSection(copy?: GeneratedCopy | null): string {
-    const pricingTitle = copy?.pricingTitle || 'Simple Pricing';
+    const pricingTitle = copy?.pricingTitle || "Simple Pricing";
     return `import { motion } from 'framer-motion';
 
 const plans = [
@@ -797,7 +905,7 @@ export default function Pricing() {
   }
 
   private generateCTASection(copy?: GeneratedCopy | null): string {
-    const ctaText = copy?.ctaText || 'Start Building Today';
+    const ctaText = copy?.ctaText || "Start Building Today";
     return `import { motion } from 'framer-motion';
 
 export default function CTA() {

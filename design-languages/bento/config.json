@@ -1,0 +1,134 @@
+{
+  "name": "bento",
+  "description": "Modular, boxed layout with flexible card sections",
+  "tokens": {
+    "colors": {
+      "background": "#09090b",
+      "foreground": "#fafafa",
+      "primary": "#6366f1",
+      "primaryForeground": "#ffffff",
+      "secondary": "#27272a",
+      "secondaryForeground": "#a1a1aa",
+      "muted": "#18181b",
+      "mutedForeground": "#71717a",
+      "accent": "#8b5cf6",
+      "accentForeground": "#ffffff",
+      "border": "#27272a",
+      "ring": "#6366f1",
+      "destructive": "#ef4444",
+      "destructiveForeground": "#ffffff",
+      "card": "#18181b",
+      "cardForeground": "#fafafa",
+      "popover": "#18181b",
+      "popoverForeground": "#fafafa",
+      "cardAccent1": "#3b82f6",
+      "cardAccent2": "#8b5cf6",
+      "cardAccent3": "#ec4899",
+      "cardAccent4": "#14b8a6"
+    },
+    "borderRadius": {
+      "none": "0",
+      "sm": "0.5rem",
+      "DEFAULT": "1rem",
+      "md": "1.25rem",
+      "lg": "1.5rem",
+      "xl": "2rem",
+      "full": "9999px"
+    },
+    "spacing": {
+      "0": "0",
+      "1": "0.25rem",
+      "2": "0.5rem",
+      "3": "0.75rem",
+      "4": "1rem",
+      "5": "1.25rem",
+      "6": "1.5rem",
+      "8": "2rem",
+      "10": "2.5rem",
+      "12": "3rem",
+      "16": "4rem",
+      "20": "5rem",
+      "24": "6rem",
+      "32": "8rem"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "sans": ["Geist", "Inter", "system-ui", "sans-serif"],
+      "serif": ["Spectral", "Georgia", "serif"],
+      "mono": ["Geist Mono", "Fira Code", "monospace"]
+    },
+    "fontSize": {
+      "xs": ["0.75rem", { "lineHeight": "1rem" }],
+      "sm": ["0.875rem", { "lineHeight": "1.25rem" }],
+      "base": ["1rem", { "lineHeight": "1.5rem" }],
+      "lg": ["1.125rem", { "lineHeight": "1.75rem" }],
+      "xl": ["1.25rem", { "lineHeight": "1.75rem" }],
+      "2xl": ["1.5rem", { "lineHeight": "2rem" }],
+      "3xl": ["1.875rem", { "lineHeight": "2.25rem" }],
+      "4xl": ["2.25rem", { "lineHeight": "2.5rem" }],
+      "5xl": ["3rem", { "lineHeight": "1.1" }],
+      "6xl": ["3.75rem", { "lineHeight": "1" }],
+      "7xl": ["4.5rem", { "lineHeight": "1" }],
+      "8xl": ["6rem", { "lineHeight": "1" }],
+      "9xl": ["8rem", { "lineHeight": "1" }]
+    },
+    "fontWeight": {
+      "thin": "100",
+      "light": "300",
+      "normal": "400",
+      "medium": "500",
+      "semibold": "600",
+      "bold": "700",
+      "extrabold": "800",
+      "black": "900"
+    },
+    "letterSpacing": {
+      "tighter": "-0.05em",
+      "tight": "-0.025em",
+      "normal": "0em",
+      "wide": "0.025em",
+      "wider": "0.05em",
+      "widest": "0.1em"
+    }
+  },
+  "effects": {
+    "shadows": {
+      "none": "none",
+      "sm": "0 0 0 1px rgba(255, 255, 255, 0.05)",
+      "DEFAULT": "0 0 0 1px rgba(255, 255, 255, 0.1)",
+      "md": "0 0 40px -12px rgba(99, 102, 241, 0.25)",
+      "lg": "0 0 60px -12px rgba(139, 92, 246, 0.3)",
+      "xl": "0 0 80px -12px rgba(99, 102, 241, 0.35)"
+    },
+    "gradients": {
+      "background": "radial-gradient(ellipse at top, #1a1a2e 0%, #09090b 100%)",
+      "cardGlow": "radial-gradient(circle at top right, rgba(99, 102, 241, 0.1) 0%, transparent 50%)",
+      "mesh": "linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 50%, rgba(236, 72, 153, 0.15) 100%)"
+    },
+    "blur": {
+      "sm": "4px",
+      "DEFAULT": "8px",
+      "md": "12px",
+      "lg": "16px",
+      "xl": "24px"
+    },
+    "transitions": {
+      "DEFAULT": "all 200ms ease-out",
+      "fast": "all 100ms ease-out",
+      "slow": "all 400ms ease-out"
+    }
+  },
+  "layout": {
+    "containerMaxWidth": "1280px",
+    "sectionPadding": "5rem 1.5rem",
+    "gridGap": "1rem",
+    "cardPadding": "1.5rem",
+    "navbarHeight": "4rem",
+    "bentoGrid": {
+      "gap": "1rem",
+      "columns": "repeat(4, 1fr)",
+      "cardMinHeight": "12rem"
+    }
+  }
+}

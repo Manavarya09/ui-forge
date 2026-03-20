@@ -1,0 +1,120 @@
+{
+  "name": "flat",
+  "description": "No depth effects, clean shapes, simple color blocks",
+  "tokens": {
+    "colors": {
+      "background": "#ffffff",
+      "foreground": "#1a1a1a",
+      "primary": "#0070f3",
+      "primaryForeground": "#ffffff",
+      "secondary": "#f4f4f5",
+      "secondaryForeground": "#52525b",
+      "muted": "#f4f4f5",
+      "mutedForeground": "#71717a",
+      "accent": "#00d084",
+      "accentForeground": "#ffffff",
+      "border": "#e4e4e7",
+      "ring": "#0070f3",
+      "destructive": "#e11d48",
+      "destructiveForeground": "#ffffff",
+      "card": "#ffffff",
+      "cardForeground": "#1a1a1a",
+      "popover": "#ffffff",
+      "popoverForeground": "#1a1a1a",
+      "success": "#22c55e",
+      "warning": "#f59e0b",
+      "info": "#3b82f6"
+    },
+    "borderRadius": {
+      "none": "0",
+      "sm": "2px",
+      "DEFAULT": "4px",
+      "md": "6px",
+      "lg": "8px",
+      "xl": "12px",
+      "full": "9999px"
+    },
+    "spacing": {
+      "0": "0",
+      "1": "0.25rem",
+      "2": "0.5rem",
+      "3": "0.75rem",
+      "4": "1rem",
+      "5": "1.25rem",
+      "6": "1.5rem",
+      "8": "2rem",
+      "10": "2.5rem",
+      "12": "3rem",
+      "16": "4rem",
+      "20": "5rem",
+      "24": "6rem",
+      "32": "8rem"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "sans": ["DM Sans", "system-ui", "sans-serif"],
+      "serif": ["DM Serif Display", "Georgia", "serif"],
+      "mono": ["DM Mono", "monospace"]
+    },
+    "fontSize": {
+      "xs": ["0.75rem", { "lineHeight": "1rem" }],
+      "sm": ["0.875rem", { "lineHeight": "1.25rem" }],
+      "base": ["1rem", { "lineHeight": "1.5rem" }],
+      "lg": ["1.125rem", { "lineHeight": "1.75rem" }],
+      "xl": ["1.25rem", { "lineHeight": "1.75rem" }],
+      "2xl": ["1.5rem", { "lineHeight": "2rem" }],
+      "3xl": ["1.875rem", { "lineHeight": "2.25rem" }],
+      "4xl": ["2.25rem", { "lineHeight": "2.5rem" }],
+      "5xl": ["3rem", { "lineHeight": "1.1" }],
+      "6xl": ["3.75rem", { "lineHeight": "1" }],
+      "7xl": ["4.5rem", { "lineHeight": "1" }],
+      "8xl": ["6rem", { "lineHeight": "1" }],
+      "9xl": ["8rem", { "lineHeight": "1" }]
+    },
+    "fontWeight": {
+      "thin": "300",
+      "light": "300",
+      "normal": "400",
+      "medium": "500",
+      "semibold": "600",
+      "bold": "700",
+      "extrabold": "700",
+      "black": "800"
+    },
+    "letterSpacing": {
+      "tighter": "-0.02em",
+      "tight": "-0.01em",
+      "normal": "0em",
+      "wide": "0.01em",
+      "wider": "0.02em",
+      "widest": "0.05em"
+    }
+  },
+  "effects": {
+    "shadows": {
+      "none": "none",
+      "sm": "none",
+      "DEFAULT": "none",
+      "md": "none",
+      "lg": "none",
+      "xl": "none"
+    },
+    "gradients": {},
+    "blur": {},
+    "transitions": {
+      "DEFAULT": "all 150ms ease-out",
+      "fast": "all 100ms ease-out",
+      "slow": "all 250ms ease-out"
+    }
+  },
+  "layout": {
+    "containerMaxWidth": "1200px",
+    "sectionPadding": "5rem 1.5rem",
+    "gridGap": "1.5rem",
+    "cardPadding": "1.5rem",
+    "navbarHeight": "4rem",
+    "flatDesign": true,
+    "noDepthEffects": true
+  }
+}
