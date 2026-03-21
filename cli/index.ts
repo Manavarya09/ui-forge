@@ -29,6 +29,20 @@ const showHelp = () => {
   console.log(chalk.bold.white("  ╰─────────────────────────────────────────────────────────────╯"));
   console.log();
   
+  console.log("  " + chalk.green("▶") + " " + chalk.bold("uiforge") + " " + chalk.gray("[options]"));
+  console.log("    " + chalk.gray("Interactive mode - select frontend or backend, template, and style"));
+  console.log("    " + chalk.green("⭐ Start here for a guided experience"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("create") + " " + chalk.gray("[template]") + " " + chalk.cyan("[name]"));
+  console.log("    " + chalk.gray("Generate a new project from a template"));
+  console.log("    " + chalk.dim("Aliases:") + " " + chalk.green("c") + ", " + chalk.green("new"));
+  console.log();
+  
+  console.log("  " + chalk.cyan("app"));
+  console.log("    " + chalk.gray("Interactive mode - same as running uiforge without arguments"));
+  console.log();
+  
   console.log("  " + chalk.cyan("app") + " " + chalk.gray("[options]"));
   console.log("    " + chalk.gray("Interactive mode - select frontend or backend, template, and style"));
   console.log("    " + chalk.green("⭐ Recommended for new users"));
@@ -113,7 +127,7 @@ const showHelp = () => {
   console.log(chalk.bold.white("  ╰─────────────────────────────────────────────────────────────╯"));
   console.log();
   
-  console.log("  " + chalk.cyan("→") + "  " + chalk.white("Interactive (recommended):") + "  " + chalk.green("npx uiforge app"));
+  console.log("  " + chalk.green("▶") + "  " + chalk.white("Interactive:") + "       " + chalk.green("npx uiforge"));
   console.log("  " + chalk.cyan("→") + "  " + chalk.white("Create frontend:") + "   " + chalk.green("npx uiforge create saas my-app"));
   console.log("  " + chalk.cyan("→") + "  " + chalk.white("Create backend:") + "   " + chalk.green("npx uiforge create api-rest my-api"));
   console.log("  " + chalk.cyan("→") + "  " + chalk.white("With style:") + "        " + chalk.green("npx uiforge create saas my-app --style glass"));
@@ -1404,26 +1418,11 @@ program
     console.log();
   });
 
-program.parse(process.argv);
-
 if (process.argv.length === 2) {
-  console.log();
-  console.log(chalk.bold.white("  ╔═══════════════════════════════════════════════════════════════╗"));
-  console.log(chalk.bold.white("  ║                                                               ║"));
-  console.log(chalk.bold.white("  ║") + chalk.bold.cyan("  🎉 Welcome to UIForge! Let's build something great.") + chalk.bold.white("         ║"));
-  console.log(chalk.bold.white("  ║                                                               ║"));
-  console.log(chalk.bold.white("  ╚═══════════════════════════════════════════════════════════════╝"));
-  console.log();
-  console.log("  " + chalk.cyan("Quick Start:"));
-  console.log();
-  console.log("  " + chalk.green("npx uiforge app") + "     " + chalk.white("Interactive mode (select template + style)"));
-  console.log("  " + chalk.green("npx uiforge create saas my-app") + "   " + chalk.white("Create frontend project"));
-  console.log("  " + chalk.green("npx uiforge create api-rest my-api") + " " + chalk.white("Create backend project"));
-  console.log();
-  console.log("  " + chalk.gray("Run 'npx uiforge --help' for all commands"));
-  console.log();
-  process.exit(0);
+  process.argv.push('app');
 }
+
+program.parse(process.argv);
 
 process.on("uncaughtException", (error) => {
   logger.errorBox("Unexpected Error", error.message);
