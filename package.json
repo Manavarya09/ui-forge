@@ -27,12 +27,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/anomalyco/ui-forge"
+    "url": "https://github.com/Manavarya09/ui-forge"
   },
   "bugs": {
-    "url": "https://github.com/anomalyco/ui-forge/issues"
+    "url": "https://github.com/Manavarya09/ui-forge/issues"
   },
-  "homepage": "https://github.com/anomalyco/ui-forge#readme",
+  "homepage": "https://github.com/Manavarya09/ui-forge#readme",
   "author": "Manav Arya Singh",
   "license": "MIT",
   "dependencies": {
