@@ -29,13 +29,14 @@ const showHelp = () => {
   console.log(chalk.bold.white("  ╰─────────────────────────────────────────────────────────────╯"));
   console.log();
   
+  console.log("  " + chalk.cyan("app") + " " + chalk.gray("[options]"));
+  console.log("    " + chalk.gray("Interactive mode - select frontend or backend, template, and style"));
+  console.log("    " + chalk.green("⭐ Recommended for new users"));
+  console.log();
+  
   console.log("  " + chalk.cyan("create") + " " + chalk.gray("[template]") + " " + chalk.cyan("[name]"));
   console.log("    " + chalk.gray("Generate a new project from a template"));
   console.log("    " + chalk.dim("Aliases:") + " " + chalk.green("c") + ", " + chalk.green("new"));
-  console.log();
-  
-  console.log("  " + chalk.cyan("init"));
-  console.log("    " + chalk.gray("Initialize a new Next.js project with UIForge"));
   console.log();
   
   console.log("  " + chalk.cyan("preview") + " " + chalk.gray("[template]"));
@@ -112,10 +113,10 @@ const showHelp = () => {
   console.log(chalk.bold.white("  ╰─────────────────────────────────────────────────────────────╯"));
   console.log();
   
-  console.log("  " + chalk.cyan("→") + "  " + chalk.white("Interactive mode:") + "  " + chalk.green("npx uiforge create"));
-  console.log("  " + chalk.cyan("→") + "  " + chalk.white("Direct creation:") + "   " + chalk.green("npx uiforge create saas my-app"));
+  console.log("  " + chalk.cyan("→") + "  " + chalk.white("Interactive (recommended):") + "  " + chalk.green("npx uiforge app"));
+  console.log("  " + chalk.cyan("→") + "  " + chalk.white("Create frontend:") + "   " + chalk.green("npx uiforge create saas my-app"));
+  console.log("  " + chalk.cyan("→") + "  " + chalk.white("Create backend:") + "   " + chalk.green("npx uiforge create api-rest my-api"));
   console.log("  " + chalk.cyan("→") + "  " + chalk.white("With style:") + "        " + chalk.green("npx uiforge create saas my-app --style glass"));
-  console.log("  " + chalk.cyan("→") + "  " + chalk.white("With dark mode:") + "   " + chalk.green("npx uiforge create saas my-app --dark"));
   console.log();
   
   console.log(chalk.bold.white("  ╭─────────────────────────────────────────────────────────────╮"));
@@ -161,12 +162,153 @@ const showHelp = () => {
 
 program
   .name("uiforge")
-  .description("")
-  .version("1.1.0");
+  .description("Generate production-grade UI systems and backends in seconds")
+  .version("1.2.0");
 
 program.on("--help", () => {
   showHelp();
 });
+
+program
+  .command("app")
+  .description("Interactive mode - select template and design language")
+  .option("-n, --name <name>", "Project name", "my-app")
+  .option("-o, --output <dir>", "Output directory", ".")
+  .option("--style <style>", "Design style (optional, will prompt if not set)")
+  .option("--template <template>", "Template (optional, will prompt if not set)")
+  .option("--type <type>", "Project type: frontend|backend (optional, will prompt if not set)")
+  .action(async (options) => {
+    logger.logo();
+
+    try {
+      const templates = registry.list();
+      const frontendTemplates = templates.filter(t => t.projectType === 'frontend');
+      const backendTemplates = templates.filter(t => t.projectType === 'backend');
+      const styles = await designLanguageRegistry.listStyles();
+
+      const typeAnswer = await inquirer.prompt([
+        {
+          type: "list",
+          name: "projectType",
+          message: "🚀 What do you want to build?",
+          choices: [
+            { name: "🎨 Frontend - Beautiful UI with React/Next.js", value: "frontend" },
+            { name: "⚙️ Backend - API with Express/Node.js", value: "backend" },
+          ],
+        },
+      ]);
+
+      const selectedType = typeAnswer.projectType;
+
+      let templateChoices;
+      let selectedTemplateId;
+
+      if (selectedType === 'frontend') {
+        templateChoices = frontendTemplates.map((t) => ({
+          name: `${chalk.hex((t as any).color || "#6366f1")(t.name)} - ${t.description.substring(0, 50)}...`,
+          value: t.id,
+          short: t.name,
+        }));
+      } else {
+        templateChoices = backendTemplates.map((t) => ({
+          name: `${chalk.hex((t as any).color || "#22c55e")(t.name)} - ${t.description.substring(0, 50)}...`,
+          value: t.id,
+          short: t.name,
+        }));
+      }
+
+      const answers = await inquirer.prompt([
+        { type: "list", name: "template", message: selectedType === 'frontend' ? "✨ Select a frontend template:" : "✨ Select a backend template:", choices: templateChoices, pageSize: 12 },
+        ...(selectedType === 'frontend' ? [
+          {
+            type: "list",
+            name: "style",
+            message: "🎨 Select a design language:",
+            choices: styles.map((s) => ({
+              name: `${chalk.cyan(s.name)} - ${s.description.substring(0, 40)}`,
+              value: s.name,
+            })),
+          },
+        ] : []),
+        { type: "input", name: "projectName", message: "📁 Project name:", default: options.name || "my-app", validate: (input: string) => {
+          if (!input.trim()) return "Project name cannot be empty";
+          if (!/^[a-z0-9-]+$/.test(input)) return "Use lowercase letters, numbers, and hyphens only";
+          return true;
+        }},
+        { type: "confirm", name: "initGit", message: "📚 Initialize git repository?", default: false },
+        { type: "confirm", name: "installDeps", message: "📦 Install dependencies automatically?", default: true },
+      ]);
+
+      console.log();
+      console.log(`  ${chalk.cyan("🚀")} Project type: ${chalk.white(selectedType === 'frontend' ? 'Frontend' : 'Backend')}`);
+      console.log(`  ${chalk.cyan("📦")} Template: ${chalk.white(answers.template)}`);
+      if (selectedType === 'frontend' && answers.style) {
+        console.log(`  ${chalk.cyan("🎨")} Style: ${chalk.white(answers.style)}`);
+      }
+      console.log(`  ${chalk.cyan("📁")} Output: ${chalk.white(path.resolve(options.output, answers.projectName))}`);
+      console.log();
+
+      const steps = [
+        { text: "Creating project structure", delay: 200 },
+        { text: "Setting up package.json", delay: 150 },
+        { text: "Configuring TypeScript", delay: 100 },
+        { text: "Generating code", delay: 200 },
+      ];
+
+      if (selectedType === 'frontend' && answers.style) {
+        steps.push({ text: "Applying design system", delay: 150 });
+      }
+      if (answers.installDeps) {
+        steps.push({ text: "Installing dependencies", delay: 300 });
+      }
+
+      console.log();
+      for (const step of steps) {
+        const spinner = logger.startSpinner(step.text);
+        await new Promise((r) => setTimeout(r, step.delay));
+        spinner.succeed();
+      }
+
+      await generator.createTemplate({
+        projectName: answers.projectName,
+        template: answers.template,
+        outputDir: options.output,
+        sections: undefined,
+        style: selectedType === 'frontend' ? answers.style : undefined,
+      });
+
+      if (answers.initGit) {
+        const gitSpinner = logger.startSpinner("Initializing git...");
+        try {
+          await execAsync("git init", { cwd: path.resolve(options.output, answers.projectName) });
+          await execAsync("git add .", { cwd: path.resolve(options.output, answers.projectName) });
+          await execAsync('git commit -m "Initial commit from UIForge"', { cwd: path.resolve(options.output, answers.projectName) });
+          gitSpinner.succeed();
+        } catch {
+          gitSpinner.warn("Git init skipped");
+        }
+      }
+
+      console.log();
+      logger.done();
+
+      if (answers.installDeps) {
+        const installSpinner = logger.startSpinner("Installing dependencies...");
+        try {
+          await execAsync("npm install", { cwd: path.resolve(options.output, answers.projectName) });
+          installSpinner.succeed();
+        } catch {
+          installSpinner.warn("npm install failed, run manually");
+        }
+        console.log();
+      }
+
+      logger.nextSteps(answers.projectName);
+    } catch (error) {
+      logger.errorBox("Generation Failed", error instanceof Error ? error.message : "Unknown error");
+      process.exit(1);
+    }
+  });
 
 program
   .command("init")
@@ -1263,6 +1405,25 @@ program
   });
 
 program.parse(process.argv);
+
+if (process.argv.length === 2) {
+  console.log();
+  console.log(chalk.bold.white("  ╔═══════════════════════════════════════════════════════════════╗"));
+  console.log(chalk.bold.white("  ║                                                               ║"));
+  console.log(chalk.bold.white("  ║") + chalk.bold.cyan("  🎉 Welcome to UIForge! Let's build something great.") + chalk.bold.white("         ║"));
+  console.log(chalk.bold.white("  ║                                                               ║"));
+  console.log(chalk.bold.white("  ╚═══════════════════════════════════════════════════════════════╝"));
+  console.log();
+  console.log("  " + chalk.cyan("Quick Start:"));
+  console.log();
+  console.log("  " + chalk.green("npx uiforge app") + "     " + chalk.white("Interactive mode (select template + style)"));
+  console.log("  " + chalk.green("npx uiforge create saas my-app") + "   " + chalk.white("Create frontend project"));
+  console.log("  " + chalk.green("npx uiforge create api-rest my-api") + " " + chalk.white("Create backend project"));
+  console.log();
+  console.log("  " + chalk.gray("Run 'npx uiforge --help' for all commands"));
+  console.log();
+  process.exit(0);
+}
 
 process.on("uncaughtException", (error) => {
   logger.errorBox("Unexpected Error", error.message);

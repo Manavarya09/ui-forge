@@ -1,7 +1,7 @@
 {
   "name": "@manavarya0909/ui-forge-cli",
-  "version": "1.1.1",
-  "description": "Generate production-grade UI systems in seconds with Next.js, Tailwind, and Framer Motion",
+  "version": "1.2.0",
+  "description": "Generate production-grade UI systems and backends in seconds - Frontend with Next.js, Tailwind, Framer Motion | Backend with Express, REST, GraphQL",
   "type": "module",
   "bin": {
     "uiforge": "./dist/cli/index.js"
@@ -11,7 +11,9 @@
     "copy-templates": "cp -r templates dist/",
     "watch": "tsc --watch",
     "dev": "tsx cli/index.ts",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "lint": "tsc --noEmit",
+    "test": "echo \"No tests configured yet\" && exit 0"
   },
   "keywords": [
     "cli",
@@ -23,7 +25,12 @@
     "framer-motion",
     "react",
     "landing-page",
-    "design-system"
+    "design-system",
+    "backend",
+    "api",
+    "express",
+    "rest",
+    "graphql"
   ],
   "repository": {
     "type": "git",

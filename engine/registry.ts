@@ -17,6 +17,8 @@ export interface TemplateConfig {
   color?: string;
 }
 
+export type ProjectType = 'frontend' | 'backend';
+
 export interface Template {
   id: string;
   name: string;
@@ -25,6 +27,7 @@ export interface Template {
   tags: string[];
   color?: string;
   files: TemplateFile[];
+  projectType?: ProjectType;
 }
 
 export interface TemplateFile {
@@ -46,6 +49,7 @@ interface TemplateConfigEntry {
   sections: string[];
   tags: string[];
   color?: string;
+  projectType?: ProjectType;
 }
 
 const AVAILABLE_TEMPLATES: TemplateConfigEntry[] = [
@@ -137,6 +141,42 @@ const AVAILABLE_TEMPLATES: TemplateConfigEntry[] = [
     tags: ['dashboard', 'tactical', 'operations', 'military'],
     color: '#f97316',
   },
+  {
+    id: 'api-rest',
+    name: 'REST API',
+    description: 'Production-ready REST API with Express, TypeScript, authentication, and database integration',
+    sections: ['auth', 'users', 'products', 'orders'],
+    tags: ['backend', 'api', 'rest', 'express'],
+    color: '#22c55e',
+    projectType: 'backend',
+  },
+  {
+    id: 'api-graphql',
+    name: 'GraphQL API',
+    description: 'GraphQL API server with Apollo, TypeScript, authentication, and real-time subscriptions',
+    sections: ['schema', 'resolvers', 'auth', 'subscriptions'],
+    tags: ['backend', 'api', 'graphql', 'apollo'],
+    color: '#e11d48',
+    projectType: 'backend',
+  },
+  {
+    id: 'api-microservice',
+    name: 'Microservice',
+    description: 'Microservice architecture with Express, message queues, Docker support, and health checks',
+    sections: ['routes', 'services', 'queues', 'docker'],
+    tags: ['backend', 'microservice', 'docker', 'queues'],
+    color: '#8b5cf6',
+    projectType: 'backend',
+  },
+  {
+    id: 'api-realtime',
+    name: 'Real-time API',
+    description: 'WebSocket-powered real-time API with Socket.io, presence, and live updates',
+    sections: ['websocket', 'rooms', 'presence', 'events'],
+    tags: ['backend', 'websocket', 'realtime', 'socket'],
+    color: '#f59e0b',
+    projectType: 'backend',
+  },
 ];
 
 class TemplateRegistry {
@@ -174,6 +214,18 @@ class TemplateRegistry {
           sections: templateConfig.sections,
           tags: templateConfig.tags,
           color: templateConfig.color,
+          projectType: config.projectType || 'frontend',
+          files: [],
+        });
+      } else if (config.projectType === 'backend') {
+        this.register({
+          id: config.id,
+          name: config.name,
+          description: config.description,
+          sections: config.sections,
+          tags: config.tags,
+          color: config.color,
+          projectType: config.projectType,
           files: [],
         });
       }
@@ -187,6 +239,7 @@ class TemplateRegistry {
       tags: ['landing', 'premium', 'complete', 'animation'],
       color: '#a855f7',
       files: [],
+      projectType: 'frontend',
     });
   }
 
@@ -201,6 +254,10 @@ class TemplateRegistry {
 
   list(): Template[] {
     return Array.from(this.templates.values());
+  }
+
+  listByType(type: ProjectType): Template[] {
+    return this.list().filter(t => t.projectType === type);
   }
 
   exists(id: string): boolean {

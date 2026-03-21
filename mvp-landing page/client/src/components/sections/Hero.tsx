@@ -15,7 +15,7 @@ export default function Hero() {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText("npx @manavarya0909/ui-forge-cli create saas my-app");
+    navigator.clipboard.writeText("npx uiforge");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -190,7 +190,7 @@ export default function Hero() {
               transition: "background 0.2s ease",
             }}
           >
-            Install CLI
+            npx uiforge
             <ArrowUpRight size={16} strokeWidth={2} />
           </a>
 
@@ -253,7 +253,7 @@ export default function Hero() {
               color: "rgba(255, 255, 255, 0.8)",
             }}
           >
-            npx @manavarya0909/ui-forge-cli create saas my-app
+            npx uiforge
           </code>
           <button
             onClick={handleCopy}
