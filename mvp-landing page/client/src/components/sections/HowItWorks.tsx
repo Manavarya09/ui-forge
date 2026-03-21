@@ -1,113 +1,160 @@
 /* =============================================================
-   How It Works — "You dream it. We ship it."
+   How It Works — 3 steps to production
    Design: Liquid Brutalism Dark Premium
-   HLS video background, centered content, liquid-glass CTA
    ============================================================= */
-import HLSVideo from "@/components/HLSVideo";
-import { ArrowUpRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { Terminal, Palette, Rocket } from "lucide-react";
+
+const steps = [
+  {
+    number: "01",
+    icon: Terminal,
+    title: "Run one command",
+    description: "npx uiforge — that's it. Choose frontend or backend, pick a template, select a design language.",
+  },
+  {
+    number: "02",
+    icon: Palette,
+    title: "Customize freely",
+    description: "Every design token, component, and style is yours. Edit everything. No vendor lock-in.",
+  },
+  {
+    number: "03",
+    icon: Rocket,
+    title: "Ship to production",
+    description: "Generated code passes linting, type checking, and is ready for Vercel, Netlify, or any host.",
+  },
+];
 
 export default function HowItWorks() {
   return (
     <section
       id="process"
       style={{
-        position: "relative",
-        minHeight: "700px",
         backgroundColor: "#000",
-        overflow: "hidden",
         paddingTop: "8rem",
         paddingBottom: "8rem",
+        paddingLeft: "1.5rem",
+        paddingRight: "1.5rem",
       }}
     >
-      {/* HLS Video Background */}
-      <HLSVideo
-        src="https://stream.mux.com/9JXDljEVWYwWu01PUkAemafDugK89o01BR6zqJ3aS9u00A.m3u8"
-        className=""
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          zIndex: 0,
-        }}
-      />
+      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
+        {/* Header */}
+        <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+          <span className="section-badge">How It Works</span>
+          <h2
+            style={{
+              fontFamily: "'Instrument Serif', serif",
+              fontStyle: "italic",
+              fontSize: "clamp(2.5rem, 6vw, 4rem)",
+              color: "#fff",
+              lineHeight: "1",
+              letterSpacing: "-3px",
+              marginTop: "0.5rem",
+              marginBottom: "1.5rem",
+            }}
+          >
+            Three steps. Done.
+          </h2>
+          <p
+            style={{
+              fontFamily: "'Barlow', sans-serif",
+              fontWeight: 300,
+              fontSize: "1.1rem",
+              color: "rgba(255,255,255,0.5)",
+              maxWidth: "500px",
+              margin: "0 auto",
+              lineHeight: "1.7",
+            }}
+          >
+            From idea to production in minutes. Not hours. Not days.
+          </p>
+        </div>
 
-      {/* Top fade */}
-      <div className="video-fade-top" />
-      {/* Bottom fade */}
-      <div className="video-fade-bottom" />
-
-      {/* Content */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 10,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
-          minHeight: "500px",
-          justifyContent: "center",
-          paddingLeft: "1.5rem",
-          paddingRight: "1.5rem",
-        }}
-      >
-        <span className="section-badge">How It Works</span>
-
-        <h2
+        {/* Steps */}
+        <div
           style={{
-            fontFamily: "'Instrument Serif', serif",
-            fontStyle: "italic",
-            fontSize: "clamp(2.25rem, 6vw, 3.75rem)",
-            color: "#fff",
-            lineHeight: "0.9",
-            letterSpacing: "-2px",
-            maxWidth: "700px",
-            marginBottom: "1.5rem",
-            marginTop: "0",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "2rem",
           }}
         >
-          You describe it. UIForge builds it.
-        </h2>
+          {steps.map(({ number, icon: Icon, title, description }, index) => (
+            <motion.div
+              key={number}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.15, duration: 0.5 }}
+              className="liquid-glass"
+              style={{
+                borderRadius: "1.5rem",
+                padding: "2.5rem",
+                position: "relative",
+                overflow: "hidden",
+              }}
+            >
+              {/* Step number */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: "-1rem",
+                  right: "-0.5rem",
+                  fontFamily: "'Instrument Serif', serif",
+                  fontSize: "6rem",
+                  fontStyle: "italic",
+                  color: "rgba(255,255,255,0.03)",
+                  lineHeight: 1,
+                  pointerEvents: "none",
+                }}
+              >
+                {number}
+              </div>
 
-        <p
-          style={{
-            fontFamily: "'Barlow', sans-serif",
-            fontWeight: 300,
-            fontSize: "0.95rem",
-            color: "rgba(255,255,255,0.6)",
-            maxWidth: "480px",
-            lineHeight: "1.7",
-            marginBottom: "2.5rem",
-          }}
-        >
-          Run a single command. UIForge generates a complete, production-ready UI system with design tokens, components, and motion built in.
-        </p>
+              {/* Icon */}
+              <div
+                className="liquid-glass-strong"
+                style={{
+                  width: "3rem",
+                  height: "3rem",
+                  borderRadius: "0.75rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                <Icon size={20} color="#fff" strokeWidth={1.5} />
+              </div>
 
-        <a
-          href="https://www.npmjs.com/package/@manavarya0909/ui-forge-cli"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="liquid-glass-strong"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            padding: "12px 24px",
-            borderRadius: "9999px",
-            fontFamily: "'Barlow', sans-serif",
-            fontWeight: 500,
-            fontSize: "0.9rem",
-            color: "#fff",
-            textDecoration: "none",
-            transition: "background 0.2s ease",
-          }}
-        >
-          Install Free
-          <ArrowUpRight size={16} strokeWidth={2} />
-        </a>
+              <h3
+                style={{
+                  fontFamily: "'Instrument Serif', serif",
+                  fontStyle: "italic",
+                  fontSize: "1.5rem",
+                  color: "#fff",
+                  marginBottom: "0.75rem",
+                  marginTop: 0,
+                }}
+              >
+                {title}
+              </h3>
+
+              <p
+                style={{
+                  fontFamily: "'Barlow', sans-serif",
+                  fontWeight: 300,
+                  fontSize: "0.9rem",
+                  color: "rgba(255,255,255,0.6)",
+                  lineHeight: "1.7",
+                  margin: 0,
+                }}
+              >
+                {description}
+              </p>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );

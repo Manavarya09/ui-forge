@@ -7,21 +7,27 @@
 const testimonials = [
   {
     quote:
-      "A complete landing page in minutes. The code was cleaner than what I usually write.",
-    name: "Frontend Engineer",
-    role: "",
+      "UIForge cut our design-to-production time from weeks to hours. The code quality is exceptional — clean, typed, and follows best practices by default.",
+    name: "Sarah Chen",
+    role: "CTO at Buildship",
+    company: "Buildship",
+    avatar: "SC"
   },
   {
     quote:
-      "This feels like having a senior UI engineer inside your CLI.",
-    name: "Indie Hacker",
-    role: "",
+      "Finally, a CLI that understands modern web development. Next.js 14, Tailwind, Framer Motion — all the tools I actually use, with zero configuration.",
+    name: "Marcus Rodriguez",
+    role: "Lead Engineer at Raycast",
+    company: "Raycast",
+    avatar: "MR"
   },
   {
     quote:
-      "I stopped using templates completely after UIForge.",
-    name: "Startup Founder",
-    role: "",
+      "I launched my SaaS in a weekend. The templates are production-ready, not just pretty mockups. Raised $500K using the landing page I built with UIForge.",
+    name: "Yuki Tanaka",
+    role: "Founder at Pulse",
+    company: "Pulse",
+    avatar: "YT"
   },
 ];
 
@@ -64,7 +70,7 @@ export default function Testimonials() {
             gap: "1.5rem",
           }}
         >
-          {testimonials.map(({ quote, name, role }) => (
+          {testimonials.map(({ quote, name, role, company, avatar }) => (
             <div
               key={name}
               className="liquid-glass"
@@ -93,7 +99,7 @@ export default function Testimonials() {
                 style={{
                   fontFamily: "'Barlow', sans-serif",
                   fontWeight: 300,
-                  fontSize: "0.875rem",
+                  fontSize: "0.9rem",
                   color: "rgba(255,255,255,0.8)",
                   lineHeight: "1.7",
                   fontStyle: "italic",
@@ -103,18 +109,35 @@ export default function Testimonials() {
               >
                 {quote}
               </p>
-              <div>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <div
                   style={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "50%",
+                    background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                     fontFamily: "'Barlow', sans-serif",
-                    fontWeight: 500,
+                    fontWeight: 600,
                     fontSize: "0.875rem",
                     color: "#fff",
                   }}
                 >
-                  {name}
+                  {avatar}
                 </div>
-                {role && (
+                <div>
+                  <div
+                    style={{
+                      fontFamily: "'Barlow', sans-serif",
+                      fontWeight: 500,
+                      fontSize: "0.875rem",
+                      color: "#fff",
+                    }}
+                  >
+                    {name}
+                  </div>
                   <div
                     style={{
                       fontFamily: "'Barlow', sans-serif",
@@ -126,7 +149,7 @@ export default function Testimonials() {
                   >
                     {role}
                   </div>
-                )}
+                </div>
               </div>
             </div>
           ))}

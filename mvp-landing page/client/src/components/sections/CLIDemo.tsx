@@ -8,16 +8,18 @@ import { Terminal, Copy, Check } from "lucide-react";
 import { useState } from "react";
 
 const cliCommands = [
-  { prompt: "$", command: "npx @manavarya0909/ui-forge-cli create saas my-app", output: null },
-  { prompt: "$", command: "cd my-app && npm install", output: "✓ Dependencies installed" },
-  { prompt: "$", command: "npm run dev", output: "▲ Ready on http://localhost:3000" },
-  { prompt: "$", command: "# Add glass style: --style glass", output: "🎨 Glass morphism applied!" },
+  { prompt: "$", command: "npx uiforge", output: null },
+  { prompt: "$", command: "  ? What do you want to build?", output: "  → Frontend (React/Next.js)" },
+  { prompt: "$", command: "  ? Select a template:", output: "  → SaaS Modern" },
+  { prompt: "$", command: "  ? Select a design style:", output: "  → Glass" },
+  { prompt: "$", command: "  ? Project name:", output: "  → my-saas-app" },
+  { prompt: "$", command: "✓ Project created successfully!", output: null },
 ];
 
 export default function CLIDemo() {
   const [copied, setCopied] = useState(false);
 
-  const fullCommand = "npx @manavarya0909/ui-forge-cli create saas my-app --style glass && cd my-app && npm install && npm run dev";
+  const fullCommand = "npx uiforge";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(fullCommand);

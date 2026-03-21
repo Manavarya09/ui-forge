@@ -77,7 +77,7 @@ export default function CTAFooter() {
             marginBottom: "2.5rem",
           }}
         >
-          Install UIForge and start building production-grade interfaces instantly.
+          Run one command. Get a production-ready frontend or backend in seconds. Free forever.
         </p>
 
         <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", justifyContent: "center" }}>
@@ -100,7 +100,7 @@ export default function CTAFooter() {
               textDecoration: "none",
             }}
           >
-            Install Free
+            npx uiforge
             <ArrowUpRight size={16} strokeWidth={2} />
           </a>
 

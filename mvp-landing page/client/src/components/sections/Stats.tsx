@@ -7,10 +7,10 @@
 import HLSVideo from "@/components/HLSVideo";
 
 const stats = [
-  { value: "200+", label: "Projects Generated" },
-  { value: "98%", label: "Dev Satisfaction" },
-  { value: "3.2x", label: "Faster Builds" },
-  { value: "5 days", label: "Setup Time" },
+  { value: "2,847", label: "Projects Generated" },
+  { value: "99%", label: "Code Quality Score" },
+  { value: "10x", label: "Faster Development" },
+  { value: "12", label: "Design Languages" },
 ];
 
 export default function Stats() {

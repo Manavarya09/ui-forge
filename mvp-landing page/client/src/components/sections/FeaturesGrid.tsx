@@ -23,23 +23,23 @@ const designStyles = [
 const features = [
   {
     icon: Sparkles,
-    title: "12 Design Styles",
+    title: "12 Design Languages",
     description: "Glass, Brutalism, Minimal, Enterprise, Bento, Neumorphism, Flat, Material, Dark Minimal, Tech Futurism, Monochrome, Swiss",
   },
   {
     icon: Layers,
-    title: "12 Production Templates",
-    description: "SaaS, Portfolio, Dashboard, Marketplace, Agency, AI Product, Real Estate, E-Commerce, Fitness & more",
+    title: "16 Production Templates",
+    description: "12 Frontend + 4 Backend templates. SaaS, Portfolio, Dashboard, API REST, GraphQL, Microservice & more",
   },
   {
     icon: Code,
     title: "Production Code",
-    description: "Clean TypeScript, Next.js 14 App Router, Tailwind CSS, Framer Motion. No bloat.",
+    description: "Clean TypeScript, Next.js 14 App Router, Tailwind CSS v4, Framer Motion. No bloat, no dependencies to fix.",
   },
   {
     icon: Palette,
     title: "AI-Powered Copy",
-    description: "Generate marketing copy with Ollama (local) or Groq (cloud) AI providers.",
+    description: "Generate marketing copy with Ollama (local, free) or Groq (cloud) AI providers. Press --ai flag.",
   },
 ];
 
@@ -70,7 +70,7 @@ export default function FeaturesGrid() {
               marginBottom: "0",
             }}
           >
-            Not a builder. A system.
+            Everything you need. Nothing you don't.
           </h2>
         </div>
 

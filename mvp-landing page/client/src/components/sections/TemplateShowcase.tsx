@@ -6,7 +6,7 @@
 import { motion } from "framer-motion";
 import { ExternalLink, ArrowRight } from "lucide-react";
 
-const templates = [
+const frontendTemplates = [
   {
     id: "saas",
     name: "SaaS",
@@ -53,24 +53,6 @@ const templates = [
     preview: "https://picsum.photos/seed/dashboard/600/400",
   },
   {
-    id: "ecommerce",
-    name: "E-Commerce",
-    tagline: "Shopping dashboard",
-    description: "Full-featured e-commerce dashboard with cart management and product listings.",
-    gradient: "from-amber-500 to-orange-600",
-    accent: "#f59e0b",
-    preview: "https://picsum.photos/seed/ecommerce/600/400",
-  },
-  {
-    id: "fitness",
-    name: "Fitness",
-    tagline: "Gym landing page",
-    description: "Bold fitness and gym landing page with programs, schedule, and membership options.",
-    gradient: "from-red-500 to-orange-600",
-    accent: "#ef4444",
-    preview: "https://picsum.photos/seed/fitness/600/400",
-  },
-  {
     id: "agency",
     name: "Agency",
     tagline: "Professional services",
@@ -79,43 +61,48 @@ const templates = [
     accent: "#8b5cf6",
     preview: "https://picsum.photos/seed/agency/600/400",
   },
+];
+
+const backendTemplates = [
   {
-    id: "tactical-dashboard",
-    name: "Tactical",
-    tagline: "Operations center",
-    description: "Military-inspired tactical operations dashboard with command center and system monitoring.",
-    gradient: "from-orange-500 to-red-600",
-    accent: "#f97316",
-    preview: "https://picsum.photos/seed/tactical/600/400",
+    id: "api-rest",
+    name: "REST API",
+    tagline: "Express + TypeScript",
+    description: "Production-ready REST API with authentication, database integration, and middleware.",
+    gradient: "from-green-500 to-emerald-600",
+    accent: "#22c55e",
+    preview: "https://picsum.photos/seed/restapi/600/400",
   },
   {
-    id: "ai-product",
-    name: "AI Product",
-    tagline: "Tech startup",
-    description: "Modern AI product landing with capabilities showcase and integration features.",
-    gradient: "from-cyan-500 to-blue-600",
-    accent: "#06b6d4",
-    preview: "https://picsum.photos/seed/ai/600/400",
+    id: "api-graphql",
+    name: "GraphQL API",
+    tagline: "Apollo + TypeScript",
+    description: "GraphQL server with resolvers, authentication, and real-time subscriptions.",
+    gradient: "from-rose-500 to-pink-600",
+    accent: "#e11d48",
+    preview: "https://picsum.photos/seed/graphql/600/400",
   },
   {
-    id: "marketplace",
-    name: "Marketplace",
-    tagline: "Multi-vendor",
-    description: "Multi-vendor marketplace with product grids, category filters, and shopping features.",
-    gradient: "from-yellow-500 to-amber-600",
-    accent: "#eab308",
-    preview: "https://picsum.photos/seed/market/600/400",
+    id: "api-microservice",
+    name: "Microservice",
+    tagline: "Docker + Queues",
+    description: "Microservice architecture with message queues, health checks, and Docker support.",
+    gradient: "from-violet-500 to-purple-600",
+    accent: "#8b5cf6",
+    preview: "https://picsum.photos/seed/micro/600/400",
   },
   {
-    id: "premium-landing",
-    name: "Premium",
-    tagline: "Full-featured landing",
-    description: "Complete landing page with premium animations, all sections, and stunning effects.",
-    gradient: "from-purple-500 to-pink-600",
-    accent: "#a855f7",
-    preview: "https://picsum.photos/seed/premium/600/400",
+    id: "api-realtime",
+    name: "Real-time API",
+    tagline: "WebSocket + Socket.io",
+    description: "WebSocket-powered API with rooms, presence, and live event broadcasting.",
+    gradient: "from-amber-500 to-orange-600",
+    accent: "#f59e0b",
+    preview: "https://picsum.photos/seed/realtime/600/400",
   },
 ];
+
+const templates = [...frontendTemplates, ...backendTemplates];
 
 export default function TemplateShowcase() {
   return (
@@ -346,7 +333,7 @@ export default function TemplateShowcase() {
                       color: "rgba(255,255,255,0.6)",
                     }}
                   >
-                    uiforge create {template.id} --style glass
+                    npx uiforge create {template.id}
                   </code>
                   <ArrowRight size={14} color="rgba(255,255,255,0.3)" />
                 </div>

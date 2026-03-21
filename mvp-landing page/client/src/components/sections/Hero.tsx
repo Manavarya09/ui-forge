@@ -160,7 +160,7 @@ export default function Hero() {
               marginBottom: "2.5rem",
             }}
           >
-            Generate premium, animation-rich frontend systems with 12 design styles. One command to production-ready Next.js, Tailwind & Framer Motion code.
+            Generate production-ready frontend (Next.js, Tailwind) or backend (REST, GraphQL, Microservices). 12 design languages, 16 templates. Free forever.
           </motion.p>
 
         {/* CTA Buttons */}

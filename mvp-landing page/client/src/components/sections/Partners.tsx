@@ -5,7 +5,7 @@
    Subtle divider lines on each side of the partners row
    ============================================================= */
 
-const partners = ["Next.js", "React", "Tailwind", "Vercel", "shadcn/ui"];
+const partners = ["Next.js", "React", "Tailwind", "TypeScript", "shadcn/ui", "Framer Motion"];
 
 export default function Partners() {
   return (
