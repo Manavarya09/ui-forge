@@ -1,0 +1,119 @@
+{
+  "name": "retro",
+  "description": "70s/80s inspired aesthetic with warm tones, rounded shapes, groovy typography and nostalgic vibes",
+  "tokens": {
+    "colors": {
+      "background": "#fef3e2",
+      "foreground": "#2d2a26",
+      "primary": "#e85d04",
+      "primaryForeground": "#ffffff",
+      "secondary": "#ffba08",
+      "secondaryForeground": "#2d2a26",
+      "muted": "#ffd60a",
+      "mutedForeground": "#5c5347",
+      "accent": "#d00000",
+      "accentForeground": "#ffffff",
+      "border": "#9d0208",
+      "ring": "#e85d04",
+      "destructive": "#d00000",
+      "destructiveForeground": "#ffffff",
+      "card": "#fff8f0",
+      "cardForeground": "#2d2a26",
+      "popover": "#fff8f0",
+      "popoverForeground": "#2d2a26"
+    },
+    "borderRadius": {
+      "none": "0",
+      "sm": "0.5rem",
+      "DEFAULT": "1rem",
+      "md": "1.5rem",
+      "lg": "2rem",
+      "xl": "3rem",
+      "full": "9999px"
+    },
+    "spacing": {
+      "0": "0",
+      "1": "0.25rem",
+      "2": "0.5rem",
+      "3": "0.75rem",
+      "4": "1rem",
+      "5": "1.25rem",
+      "6": "1.5rem",
+      "8": "2rem",
+      "10": "2.5rem",
+      "12": "3rem",
+      "16": "4rem",
+      "20": "5rem",
+      "24": "6rem",
+      "32": "8rem"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "sans": ["Righteous", "Comic Neue", "cursive", "sans-serif"],
+      "serif": ["Fraunces", "serif"],
+      "mono": ["Space Mono", "Courier New", "monospace"]
+    },
+    "fontSize": {
+      "xs": ["0.75rem", { "lineHeight": "1rem" }],
+      "sm": ["0.875rem", { "lineHeight": "1.25rem" }],
+      "base": ["1rem", { "lineHeight": "1.5rem" }],
+      "lg": ["1.125rem", { "lineHeight": "1.75rem" }],
+      "xl": ["1.25rem", { "lineHeight": "1.75rem" }],
+      "2xl": ["1.5rem", { "lineHeight": "2rem" }],
+      "3xl": ["1.875rem", { "lineHeight": "2.25rem" }],
+      "4xl": ["2.25rem", { "lineHeight": "2.5rem" }],
+      "5xl": ["3rem", { "lineHeight": "1.1" }],
+      "6xl": ["3.75rem", { "lineHeight": "1" }],
+      "7xl": ["4.5rem", { "lineHeight": "1" }],
+      "8xl": ["6rem", { "lineHeight": "1" }],
+      "9xl": ["8rem", { "lineHeight": "1" }]
+    },
+    "fontWeight": {
+      "thin": "300",
+      "light": "400",
+      "normal": "500",
+      "medium": "600",
+      "semibold": "700",
+      "bold": "800",
+      "extrabold": "900",
+      "black": "900"
+    },
+    "letterSpacing": {
+      "tighter": "-0.02em",
+      "tight": "-0.01em",
+      "normal": "0em",
+      "wide": "0.02em",
+      "wider": "0.05em",
+      "widest": "0.1em"
+    }
+  },
+  "effects": {
+    "shadows": {
+      "none": "none",
+      "sm": "0 4px 0px #9d0208",
+      "DEFAULT": "0 6px 0px #9d0208",
+      "md": "0 8px 0px #9d0208",
+      "lg": "0 12px 0px #9d0208",
+      "xl": "0 16px 0px #9d0208"
+    },
+    "gradients": {
+      "primary": "linear-gradient(135deg, #e85d04 0%, #ffba08 100%)",
+      "background": "linear-gradient(180deg, #fef3e2 0%, #ffd60a 100%)",
+      "sunset": "linear-gradient(135deg, #ffba08 0%, #e85d04 50%, #d00000 100%)"
+    },
+    "blur": {},
+    "transitions": {
+      "DEFAULT": "all 200ms ease-out",
+      "fast": "all 100ms ease-out",
+      "slow": "all 400ms ease-out"
+    }
+  },
+  "layout": {
+    "containerMaxWidth": "1200px",
+    "sectionPadding": "5rem 2rem",
+    "gridGap": "1.5rem",
+    "cardPadding": "1.5rem",
+    "navbarHeight": "5rem"
+  }
+}

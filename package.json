@@ -1,19 +1,22 @@
 {
   "name": "@manavarya0909/ui-forge-cli",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Generate production-grade UI systems and backends in seconds - Frontend with Next.js, Tailwind | Backend with Express, Database, Auth",
   "type": "module",
   "bin": {
     "uiforge": "./dist/cli/index.js"
   },
   "scripts": {
-    "build": "tsc && npm run copy-templates",
+    "build": "tsc && npm run copy-templates && npm run copy-design-languages",
     "copy-templates": "cp -r templates dist/",
+    "copy-design-languages": "cp -r design-languages dist/",
     "watch": "tsc --watch",
     "dev": "tsx cli/index.ts",
     "prepublishOnly": "npm run build",
     "lint": "tsc --noEmit",
-    "test": "echo \"No tests configured yet\" && exit 0"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [
     "cli",
@@ -57,7 +60,8 @@
     "@types/inquirer": "^9.0.9",
     "@types/node": "^20.14.0",
     "tsx": "^4.15.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
   },
   "engines": {
     "node": ">=18.0.0"

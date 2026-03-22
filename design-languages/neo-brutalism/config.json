@@ -1,0 +1,117 @@
+{
+  "name": "neo-brutalism",
+  "description": "Modern brutalism with color, soft shadows, playful elements while keeping raw edge and bold presence",
+  "tokens": {
+    "colors": {
+      "background": "#FFFDF5",
+      "foreground": "#1a1a1a",
+      "primary": "#6366f1",
+      "primaryForeground": "#ffffff",
+      "secondary": "#fef3c7",
+      "secondaryForeground": "#1a1a1a",
+      "muted": "#f5f5f5",
+      "mutedForeground": "#525252",
+      "accent": "#f43f5e",
+      "accentForeground": "#ffffff",
+      "border": "#1a1a1a",
+      "ring": "#6366f1",
+      "destructive": "#dc2626",
+      "destructiveForeground": "#ffffff",
+      "card": "#ffffff",
+      "cardForeground": "#1a1a1a",
+      "popover": "#ffffff",
+      "popoverForeground": "#1a1a1a"
+    },
+    "borderRadius": {
+      "none": "0",
+      "sm": "0",
+      "DEFAULT": "0",
+      "md": "0",
+      "lg": "0",
+      "xl": "0",
+      "full": "0"
+    },
+    "spacing": {
+      "0": "0",
+      "1": "0.25rem",
+      "2": "0.5rem",
+      "3": "0.75rem",
+      "4": "1rem",
+      "5": "1.25rem",
+      "6": "1.5rem",
+      "8": "2rem",
+      "10": "2.5rem",
+      "12": "3rem",
+      "16": "4rem",
+      "20": "5rem",
+      "24": "6rem",
+      "32": "8rem"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "sans": ["Space Grotesk", "Archivo Black", "sans-serif"],
+      "serif": ["Archivo Black", "Impact", "serif"],
+      "mono": ["Space Mono", "Courier New", "monospace"]
+    },
+    "fontSize": {
+      "xs": ["0.75rem", { "lineHeight": "1rem" }],
+      "sm": ["0.875rem", { "lineHeight": "1.1rem" }],
+      "base": ["1rem", { "lineHeight": "1.2rem" }],
+      "lg": ["1.125rem", { "lineHeight": "1.3rem" }],
+      "xl": ["1.25rem", { "lineHeight": "1.3rem" }],
+      "2xl": ["1.5rem", { "lineHeight": "1.2rem" }],
+      "3xl": ["2rem", { "lineHeight": "1.1" }],
+      "4xl": ["2.5rem", { "lineHeight": "1" }],
+      "5xl": ["3.5rem", { "lineHeight": "1" }],
+      "6xl": ["4.5rem", { "lineHeight": "0.95" }],
+      "7xl": ["6rem", { "lineHeight": "0.9" }],
+      "8xl": ["8rem", { "lineHeight": "0.85" }],
+      "9xl": ["10rem", { "lineHeight": "0.8" }]
+    },
+    "fontWeight": {
+      "thin": "700",
+      "light": "700",
+      "normal": "700",
+      "medium": "700",
+      "semibold": "700",
+      "bold": "800",
+      "extrabold": "800",
+      "black": "900"
+    },
+    "letterSpacing": {
+      "tighter": "-0.03em",
+      "tight": "-0.02em",
+      "normal": "0em",
+      "wide": "0.05em",
+      "wider": "0.1em",
+      "widest": "0.2em"
+    }
+  },
+  "effects": {
+    "shadows": {
+      "none": "none",
+      "sm": "4px 4px 0px #1a1a1a",
+      "DEFAULT": "6px 6px 0px #1a1a1a",
+      "md": "8px 8px 0px #1a1a1a",
+      "lg": "12px 12px 0px #1a1a1a",
+      "xl": "16px 16px 0px #1a1a1a",
+      "colored": "6px 6px 0px var(--shadow-color, #1a1a1a)"
+    },
+    "gradients": {},
+    "blur": {},
+    "transitions": {
+      "DEFAULT": "all 150ms ease-out",
+      "fast": "all 100ms ease-out",
+      "slow": "all 250ms ease-out"
+    }
+  },
+  "layout": {
+    "containerMaxWidth": "1280px",
+    "sectionPadding": "4rem 0",
+    "gridGap": "1rem",
+    "cardPadding": "1.5rem",
+    "navbarHeight": "4rem",
+    "borderWidth": "3px"
+  }
+}

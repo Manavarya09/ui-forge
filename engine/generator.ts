@@ -6,7 +6,7 @@ import {
   fileExists,
   readFile,
 } from "../utils/fs.js";
-import { logger } from "../utils/logger.js";
+import { logger, setVerboseMode, setDryRunMode, isDryRunMode, isVerboseMode } from "../utils/logger.js";
 import { registry, type Template, type TemplateFile } from "./registry.js";
 import {
   generateTailwindConfig,
@@ -21,40 +21,23 @@ import {
 import { injector, availableSections } from "./injector.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import chalk from "chalk";
+import {
+  UIForgeError,
+  TemplateNotFoundError,
+  StyleNotFoundError,
+  InvalidProjectNameError,
+  ErrorCode,
+  type GenerationOptions,
+  type BackendOptions,
+  type GeneratedCopy,
+  type GenerationResult,
+  type DryRunResult,
+  type FileChange,
+} from "../types/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-export interface GenerationOptions {
-  projectName: string;
-  template: string;
-  outputDir: string;
-  sections?: string[];
-  useAI?: boolean;
-  darkMode?: boolean;
-  primaryColor?: string;
-  font?: string;
-  style?: string;
-  apiKey?: string;
-}
-
-export interface BackendOptions {
-  projectName: string;
-  template: string;
-  outputDir: string;
-  database?: string | null;
-  auth?: string | null;
-  design?: string | null;
-  apiKey?: string;
-}
-
-export interface GeneratedCopy {
-  heroTitle: string;
-  heroSubtitle: string;
-  ctaText: string;
-  featuresTitle: string;
-  pricingTitle: string;
-}
 
 export class Generator {
   async initProject(options: GenerationOptions): Promise<void> {
@@ -83,10 +66,13 @@ export class Generator {
   }
 
   async createTemplate(options: GenerationOptions): Promise<void> {
+    setVerboseMode(options.verbose || false);
+    setDryRunMode(options.dryRun || false);
+
     const template = registry.get(options.template);
 
     if (!template) {
-      throw new Error(`Template "${options.template}" not found`);
+      throw new TemplateNotFoundError(options.template);
     }
 
     const styleName = options.style || "minimal";
@@ -101,8 +87,6 @@ export class Generator {
 
     const sections = options.sections || template.sections;
     const outputPath = path.join(options.outputDir, options.projectName);
-
-    await this.createFullProject(options.projectName, outputPath);
 
     const cliDir = path.dirname(__dirname);
     const projectRoot = path.dirname(cliDir);
@@ -131,6 +115,23 @@ export class Generator {
       }
     }
 
+    if (isDryRunMode()) {
+      const dryRunResult = await this.performDryRun(
+        options.projectName,
+        outputPath,
+        template,
+        sections,
+        designLanguage,
+        templateExists,
+        sourceTemplatePath,
+        cliDir,
+        projectRoot
+      );
+      return;
+    }
+
+    await this.createFullProject(options.projectName, outputPath);
+
     if (templateExists) {
       const { default: fsExtra } = await import("fs-extra");
       await fsExtra.copy(sourceTemplatePath, path.join(outputPath, "app"));
@@ -149,6 +150,66 @@ export class Generator {
     }
 
     await this.generateDesignSystem(outputPath, designLanguage);
+  }
+
+  private async performDryRun(
+    projectName: string,
+    outputPath: string,
+    template: Template,
+    sections: string[],
+    designLanguage: DesignLanguage,
+    templateExists: boolean,
+    sourceTemplatePath: string,
+    cliDir: string,
+    projectRoot: string
+  ): Promise<void> {
+    const changes: FileChange[] = [];
+    const files: { path: string; action: 'create' | 'update' | 'skip' }[] = [];
+
+    logger.dryRun.header(`Project: ${projectName} at ${outputPath}`);
+
+    const baseFiles = [
+      "package.json",
+      "tsconfig.json",
+      "next.config.mjs",
+      "postcss.config.mjs",
+      "components.json",
+      "tailwind.config.ts",
+      "app/globals.css",
+      "lib/utils.ts",
+    ];
+
+    for (const file of baseFiles) {
+      files.push({ path: `${projectName}/${file}`, action: 'create' });
+    }
+
+    if (templateExists) {
+      files.push({ path: `${projectName}/app/page.tsx`, action: 'create' });
+      files.push({ path: `${projectName}/app/layout.tsx`, action: 'create' });
+      files.push({ path: `${projectName}/app/globals.css`, action: 'update' });
+    }
+
+    for (const section of sections) {
+      files.push({ path: `${projectName}/app/sections/${section}.tsx`, action: 'create' });
+    }
+
+    files.push({ path: `${projectName}/tailwind.config.ts`, action: 'update' });
+
+    for (const file of files) {
+      logger.dryRun.file(file.action, file.path);
+    }
+
+    const stats = {
+      created: files.filter(f => f.action === 'create').length,
+      updated: files.filter(f => f.action === 'update').length,
+      skipped: files.filter(f => f.action === 'skip').length,
+      total: files.length,
+    };
+
+    logger.dryRun.summary(stats);
+
+    console.log(chalk.bold.yellow('  💡 To create this project, run without --dry-run flag'));
+    console.log();
   }
 
   private parseGeneratedCopy(content: string): GeneratedCopy {

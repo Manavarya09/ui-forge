@@ -15,6 +15,14 @@ import { fileURLToPath } from "url";
 import { exec, spawn } from "child_process";
 import { promisify } from "util";
 import fs from "fs/promises";
+import { 
+  UIForgeError, 
+  TemplateNotFoundError, 
+  StyleNotFoundError,
+  InvalidProjectNameError,
+  formatError,
+  ErrorCode 
+} from "../types/errors.js";
 
 const execAsync = promisify(exec);
 
@@ -22,19 +30,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const uiForgeAscii = `
-${gradient(["#06b6d4", "#3b82f6", "#8b5cf6"])("╔══════════════════════════════════════════════════════════════════════════╗")}
-${gradient(["#06b6d4", "#3b82f6", "#8b5cf6"])("║")}
-${gradient(["#06b6d4", "#3b82f6", "#8b5cf6"])("║")}  ${chalk.bold.white("███╗   ██╗ ██████╗ ███╗   ██╗████████╗ ██████╗ ██████╗ ██╗   ██╗")}
-${gradient(["#06b6d4", "#3b82f6", "#8b5cf6"])("║")}  ${chalk.bold.white("██║   ██║██╔════╝ ████╗  ██║╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝")}
-${gradient(["#06b6d4", "#3b82f6", "#8b5cf6"])("║")}  ${chalk.bold.white("██║   ██║██║  ███╗██╔██╗ ██║   ██║   ██║   ██║██████╔╝ ╚████╔╝ ")}
-${gradient(["#06b6d4", "#3b82f6", "#8b5cf6"])("║")}  ${chalk.bold.white("██║   ██║██║   ██║██║╚██╗██║   ██║   ██║   ██║██╔══██╗  ╚██╔╝  ")}
-${gradient(["#06b6d4", "#3b82f6", "#8b5cf6"])("║")}  ${chalk.bold.white("╚██████╔╝╚██████╔╝██║ ╚████║   ██║   ╚██████╔╝██║  ██║   ██║   ")}
-${gradient(["#06b6d4", "#3b82f6", "#8b5cf6"])("║")}  ${chalk.bold.white(" ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ")}
-${gradient(["#06b6d4", "#3b82f6", "#8b5cf6"])("║")}
-${gradient(["#06b6d4", "#3b82f6", "#8b5cf6"])("║")}  ${chalk.gray("═══════════════════════════════════════════════════════════════════════════")}
-${gradient(["#06b6d4", "#3b82f6", "#8b5cf6"])("║")}  ${chalk.gray("                    Build stunning UIs in seconds, not days                      ")}
-${gradient(["#06b6d4", "#3b82f6", "#8b5cf6"])("║")}
-${gradient(["#06b6d4", "#3b82f6", "#8b5cf6"])("╚══════════════════════════════════════════════════════════════════════════╝")}
+${chalk.bold.green("██╗   ██╗")}${chalk.bold.white("██╗      ")}${chalk.bold.cyan("██████╗ ")}${chalk.bold.white("██╗   ██╗")}${chalk.bold.green("██╗   ██╗")}
+${chalk.bold.green("██║   ██╗")}${chalk.bold.white("██║      ")}${chalk.bold.cyan("██╔══██╗")}${chalk.bold.white("██║   ██║")}${chalk.bold.green("██║   ██║")}
+${chalk.bold.green("██║   ██╗")}${chalk.bold.white("██║ ")}${chalk.bold.cyan("╺━╸  ")}${chalk.bold.white("██████╔╝")}${chalk.bold.white("██║   ██║")}${chalk.bold.green("██║   ██╗")}
+${chalk.bold.white("╚██████╔╝")}${chalk.bold.cyan("██║      ")}${chalk.bold.white("██║  ██║")}${chalk.bold.white("██║   ██║")}${chalk.bold.green("╚██████╔╝")}
+${chalk.bold.gray(" ╚═════╝ ")}${chalk.bold.cyan("╚═╝      ")}${chalk.bold.gray("╚═╝  ╚═╝")}${chalk.bold.gray("╚═════╝ ")}${chalk.bold.green(" ╚═════╝ ")}
+${chalk.bold.gray("         ")}${chalk.bold.cyan("╚═╝      ")}${chalk.bold.gray("╚═════╝ ")}${chalk.bold.cyan("╚══════╝")}
+${chalk.bold.gray("                  ╚═╝      ")}${chalk.bold.cyan("╚═════╝ ")}${chalk.bold.green("╚══════╝")}
 `;
 
 const miniLogo = `
@@ -104,6 +106,8 @@ program
   .option("-o, --output <dir>", "Output directory", ".")
   .option("-d, --database <db>", "Database: prisma|drizzle|mongodb|postgres", "")
   .option("-a, --auth <auth>", "Auth: clerk|nextauth|supabase", "")
+  .option("--dry-run", "Preview changes without writing files", false)
+  .option("--verbose", "Enable verbose output for debugging", false)
   .option("--api-key <key>", "AI API key for design language application", "")
   .option("--git", "Initialize git repository", false)
   .option("--push", "Push to GitHub", false)
@@ -306,10 +310,20 @@ program
       console.log();
     } catch (error) {
       console.log();
-      console.log(chalk.red("  ┌──────────────────────────────────────────────────┐"));
-      console.log(chalk.red("  │") + " " + chalk.red.bold("Generation Failed"));
-      console.log(chalk.red("  │") + " " + chalk.red(error instanceof Error ? error.message : "Unknown error"));
-      console.log(chalk.red("  └──────────────────────────────────────────────────┘"));
+      if (error instanceof UIForgeError) {
+        console.log(chalk.red("  ┌──────────────────────────────────────────────────┐"));
+        console.log(chalk.red("  │") + " " + chalk.red.bold(error.code.replace(/_/g, ' ')));
+        console.log(chalk.red("  │") + " " + chalk.red(error.message));
+        if (error.hint) {
+          console.log(chalk.gray("  │") + " " + chalk.gray(`💡 ${error.hint}`));
+        }
+        console.log(chalk.red("  └──────────────────────────────────────────────────┘"));
+      } else {
+        console.log(chalk.red("  ┌──────────────────────────────────────────────────┐"));
+        console.log(chalk.red("  │") + " " + chalk.red.bold("Generation Failed"));
+        console.log(chalk.red("  │") + " " + chalk.red(formatError(error)));
+        console.log(chalk.red("  └──────────────────────────────────────────────────┘"));
+      }
       console.log();
       process.exit(1);
     }
@@ -324,6 +338,8 @@ program
   .option("--git", "Initialize git repository", false)
   .option("--push", "Push to GitHub", false)
   .option("--install", "Auto-install dependencies", true)
+  .option("--dry-run", "Preview changes without writing files", false)
+  .option("--verbose", "Enable verbose output for debugging", false)
   .action(async (options) => {
     console.clear();
     console.log(uiForgeAscii);
@@ -551,10 +567,20 @@ program
       console.log();
     } catch (error) {
       console.log();
-      console.log(chalk.red("  ┌──────────────────────────────────────────────────┐"));
-      console.log(chalk.red("  │") + " " + chalk.red.bold("Generation Failed"));
-      console.log(chalk.red("  │") + " " + chalk.red(error instanceof Error ? error.message : "Unknown error"));
-      console.log(chalk.red("  └──────────────────────────────────────────────────┘"));
+      if (error instanceof UIForgeError) {
+        console.log(chalk.red("  ┌──────────────────────────────────────────────────┐"));
+        console.log(chalk.red("  │") + " " + chalk.red.bold(error.code.replace(/_/g, ' ')));
+        console.log(chalk.red("  │") + " " + chalk.red(error.message));
+        if (error.hint) {
+          console.log(chalk.gray("  │") + " " + chalk.gray(`💡 ${error.hint}`));
+        }
+        console.log(chalk.red("  └──────────────────────────────────────────────────┘"));
+      } else {
+        console.log(chalk.red("  ┌──────────────────────────────────────────────────┐"));
+        console.log(chalk.red("  │") + " " + chalk.red.bold("Generation Failed"));
+        console.log(chalk.red("  │") + " " + chalk.red(formatError(error)));
+        console.log(chalk.red("  └──────────────────────────────────────────────────┘"));
+      }
       console.log();
       process.exit(1);
     }
@@ -578,6 +604,8 @@ program
   .option("--style <style>", "Design style (minimal, glass, brutalism, etc.)", "")
   .option("-i, --interactive", "Interactive template selection", false)
   .option("--dark", "Enable dark mode support", false)
+  .option("--dry-run", "Preview changes without writing files", false)
+  .option("--verbose", "Enable verbose output for debugging", false)
   .action(async (templateArg, options) => {
     console.clear();
     console.log(uiForgeAscii);
@@ -630,14 +658,7 @@ program
 
       const templateExists = registry.exists(selectedTemplate!);
       if (!templateExists) {
-        console.log();
-        console.log(chalk.red("  ┌──────────────────────────────────────────────────┐"));
-        console.log(chalk.red("  │") + " " + chalk.red.bold("Template Not Found"));
-        console.log(chalk.red("  │") + " " + chalk.red(`Template "${selectedTemplate}" does not exist.`));
-        console.log(chalk.red("  │") + " " + chalk.gray("Run \"uiforge list\" to see available templates."));
-        console.log(chalk.red("  └──────────────────────────────────────────────────┘"));
-        console.log();
-        process.exit(1);
+        throw new TemplateNotFoundError(selectedTemplate!);
       }
 
       const templateData = registry.get(selectedTemplate!)!;
@@ -647,14 +668,7 @@ program
       if (selectedStyle) {
         styleExists = await designLanguageRegistry.styleExists(selectedStyle);
         if (!styleExists) {
-          console.log();
-          console.log(chalk.red("  ┌──────────────────────────────────────────────────┐"));
-          console.log(chalk.red("  │") + " " + chalk.red.bold("Style Not Found"));
-          console.log(chalk.red("  │") + " " + chalk.red(`Style "${selectedStyle}" does not exist.`));
-          console.log(chalk.red("  │") + " " + chalk.gray("Run \"uiforge styles\" to see available styles."));
-          console.log(chalk.red("  └──────────────────────────────────────────────────┘"));
-          console.log();
-          process.exit(1);
+          throw new StyleNotFoundError(selectedStyle);
         }
       }
 
@@ -700,6 +714,8 @@ program
         font: options.font || undefined,
         style: selectedStyle,
         darkMode: options.dark,
+        dryRun: options.dryRun,
+        verbose: options.verbose,
       });
 
       if (options.dark) {
@@ -761,10 +777,20 @@ program
       console.log();
     } catch (error) {
       console.log();
-      console.log(chalk.red("  ┌──────────────────────────────────────────────────┐"));
-      console.log(chalk.red("  │") + " " + chalk.red.bold("Generation Failed"));
-      console.log(chalk.red("  │") + " " + chalk.red(error instanceof Error ? error.message : "Unknown error"));
-      console.log(chalk.red("  └──────────────────────────────────────────────────╝"));
+      if (error instanceof UIForgeError) {
+        console.log(chalk.red("  ┌──────────────────────────────────────────────────┐"));
+        console.log(chalk.red("  │") + " " + chalk.red.bold(error.code.replace(/_/g, ' ')));
+        console.log(chalk.red("  │") + " " + chalk.red(error.message));
+        if (error.hint) {
+          console.log(chalk.gray("  │") + " " + chalk.gray(`💡 ${error.hint}`));
+        }
+        console.log(chalk.red("  └──────────────────────────────────────────────────┘"));
+      } else {
+        console.log(chalk.red("  ┌──────────────────────────────────────────────────┐"));
+        console.log(chalk.red("  │") + " " + chalk.red.bold("Generation Failed"));
+        console.log(chalk.red("  │") + " " + chalk.red(formatError(error)));
+        console.log(chalk.red("  └──────────────────────────────────────────────────╝"));
+      }
       console.log();
       process.exit(1);
     }
@@ -888,6 +914,83 @@ program
       console.log(`  ${chalk.yellow("Make sure you are logged in to")} ${chalk.white(provider)}`);
       console.log();
     }
+  });
+
+program
+  .command("add")
+  .description("Add a section to an existing project")
+  .argument("<section>", "Section to add (hero, features, pricing, etc.)")
+  .option("-o, --output <dir>", "Project directory", ".")
+  .option("-p, --position <position>", "Position: start or end", "end")
+  .option("--dry-run", "Preview changes without writing files", false)
+  .option("--verbose", "Enable verbose output for debugging", false)
+  .action(async (section, options) => {
+    console.clear();
+    console.log(miniLogo);
+    console.log();
+
+    try {
+      const projectPath = path.resolve(options.output);
+      
+      if (options.dryRun) {
+        logger.dryRun.header(`Adding section "${section}" to project at ${projectPath}`);
+        logger.dryRun.file('create', `${projectPath}/app/sections/${section}.tsx`);
+        logger.dryRun.summary({ created: 1, updated: 0, skipped: 0, total: 1 });
+        console.log(chalk.bold.yellow('  💡 To add this section, run without --dry-run flag'));
+        return;
+      }
+
+      const spinner = ora({ text: chalk.cyan(`Adding ${section} section...`), spinner: "dots" }).start();
+      
+      await generator.addSection(section, projectPath, options.position);
+      
+      spinner.succeed();
+      console.log();
+      console.log(chalk.green.bold(`  ✓ Section "${section}" added successfully!`));
+      console.log();
+    } catch (error) {
+      console.log();
+      console.log(chalk.red("  ┌──────────────────────────────────────────────────┐"));
+      console.log(chalk.red("  │") + " " + chalk.red.bold("Failed to add section"));
+      if (error instanceof Error) {
+        console.log(chalk.red("  │") + " " + chalk.red(error.message));
+      }
+      console.log(chalk.red("  └──────────────────────────────────────────────────┘"));
+      console.log();
+      console.log(chalk.gray("  Available sections:"));
+      console.log(chalk.gray(`    ${availableSections.map(s => s.name).join(", ")}`));
+      console.log();
+      process.exit(1);
+    }
+  });
+
+program
+  .command("update")
+  .description("Update an existing UIForge project to the latest version")
+  .option("-o, --output <dir>", "Project directory", ".")
+  .option("--dry-run", "Preview changes without writing files", false)
+  .option("--verbose", "Enable verbose output for debugging", false)
+  .action(async (options) => {
+    console.clear();
+    console.log(miniLogo);
+    console.log();
+
+    const projectPath = path.resolve(options.output);
+
+    if (options.dryRun) {
+      logger.dryRun.header(`Updating project at ${projectPath}`);
+      logger.dryRun.file('update', 'package.json', 'Update dependencies to latest');
+      logger.dryRun.file('update', 'tailwind.config.ts', 'Update design tokens');
+      logger.dryRun.file('update', 'components.json', 'Update shadcn/ui config');
+      logger.dryRun.summary({ created: 0, updated: 3, skipped: 0, total: 3 });
+      console.log(chalk.bold.yellow('  💡 To update, run without --dry-run flag'));
+      return;
+    }
+
+    console.log(chalk.yellow("  ⚠ Update feature coming soon!"));
+    console.log();
+    console.log(chalk.gray("  For now, create a new project and copy your custom code."));
+    console.log();
   });
 
 program

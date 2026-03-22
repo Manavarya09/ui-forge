@@ -2,6 +2,25 @@ import chalk from 'chalk';
 import gradient from 'gradient-string';
 import ora, { type Ora } from 'ora';
 
+let verboseMode = false;
+let dryRunMode = false;
+
+export function setVerboseMode(enabled: boolean): void {
+  verboseMode = enabled;
+}
+
+export function setDryRunMode(enabled: boolean): void {
+  dryRunMode = enabled;
+}
+
+export function isVerboseMode(): boolean {
+  return verboseMode;
+}
+
+export function isDryRunMode(): boolean {
+  return dryRunMode;
+}
+
 const theme = {
   primary: gradient(['#6366f1', '#8b5cf6', '#a855f7']),
   secondary: gradient(['#22c55e', '#16a34a']),
@@ -191,6 +210,18 @@ export const logger = {
     console.log('  ' + chalk.cyan('ℹ') + ' ' + chalk.cyan(message));
   },
 
+  debug: (message: string) => {
+    if (verboseMode) {
+      console.log('  ' + chalk.gray('🔍') + ' ' + chalk.gray(message));
+    }
+  },
+
+  verbose: (message: string) => {
+    if (verboseMode) {
+      console.log('  ' + chalk.magenta('•') + ' ' + chalk.magenta(message));
+    }
+  },
+
   step: (current: number, total: number, message: string) => {
     const percentage = Math.round((current / total) * 100);
     const filled = Math.round((current / total) * 20);
@@ -320,4 +351,42 @@ export const logger = {
   asciiLogo,
   coolBanner,
   welcomeScreen,
+
+  dryRun: {
+    header: (message: string) => {
+      console.log();
+      console.log(chalk.bold.yellow('  DRY RUN - No files will be created'));
+      console.log(chalk.gray('  ' + '─'.repeat(50)));
+      console.log();
+      console.log(chalk.bold.white('  ' + message));
+      console.log();
+    },
+    file: (action: 'create' | 'update' | 'skip', path: string, reason?: string) => {
+      const icons: Record<string, string> = {
+        create: chalk.green('+'),
+        update: chalk.blue('~'),
+        skip: chalk.gray('-'),
+      };
+      const icon = icons[action] || chalk.gray('-');
+      const actionText: Record<string, string> = {
+        create: chalk.green('CREATE'),
+        update: chalk.blue('UPDATE'),
+        skip: chalk.gray('SKIP'),
+      };
+      console.log(`  ${icon} ${chalk.bold(actionText[action] || 'SKIP')} ${chalk.white(path)}`);
+      if (reason) {
+        console.log(`    ${chalk.gray('→')} ${chalk.gray(reason)}`);
+      }
+    },
+    summary: (stats: { created: number; updated: number; skipped: number; total: number }) => {
+      console.log();
+      console.log(chalk.gray('  ' + '─'.repeat(50)));
+      console.log('  ' + chalk.bold.white('Summary:'));
+      console.log(`    ${chalk.green('+ Created:')} ${chalk.white(stats.created.toString())}`);
+      console.log(`    ${chalk.blue('~ Updated:')} ${chalk.white(stats.updated.toString())}`);
+      console.log(`    ${chalk.gray('- Skipped:')} ${chalk.white(stats.skipped.toString())}`);
+      console.log(`    ${chalk.bold('  Total:')} ${chalk.bold.white(stats.total.toString())}`);
+      console.log();
+    },
+  },
 };
