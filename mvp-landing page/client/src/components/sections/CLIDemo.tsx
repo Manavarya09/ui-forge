@@ -9,11 +9,33 @@ import { useState } from "react";
 
 const cliCommands = [
   { prompt: "$", command: "npx uiforge", output: null },
-  { prompt: "$", command: "  ? What do you want to build?", output: "  → Frontend (React/Next.js)" },
-  { prompt: "$", command: "  ? Select a template:", output: "  → SaaS Modern" },
-  { prompt: "$", command: "  ? Select a design style:", output: "  → Glass" },
-  { prompt: "$", command: "  ? Project name:", output: "  → my-saas-app" },
-  { prompt: "$", command: "✓ Project created successfully!", output: null },
+  { prompt: "", command: "", output: "╔══════════════════════════════════════════════════════╗" },
+  { prompt: "", command: "", output: "║  UIForge v1.4.0  Premium UI Generator              ║" },
+  { prompt: "", command: "", output: "╚══════════════════════════════════════════════════════╝" },
+  { prompt: "", command: "", output: "" },
+  { prompt: "?", command: " What do you want to build?", output: "" },
+  { prompt: "", command: "   ▸ 🎨 Frontend - Beautiful UI with Next.js", output: "" },
+  { prompt: "", command: "     ⚙️ Backend - API with Express + Database", output: "" },
+  { prompt: "", command: "     🚀 Full Stack - Frontend + Backend", output: "" },
+  { prompt: "", command: "", output: "" },
+  { prompt: "?", command: " Select a template:", output: "" },
+  { prompt: "", command: "   ▸ SaaS Modern", output: "" },
+  { prompt: "?", command: " Apply design language (AI will implement on template):", output: "" },
+  { prompt: "", command: "     None", output: "" },
+  { prompt: "", command: "   ▸ Glass", output: "" },
+  { prompt: "", command: "     Brutalism", output: "" },
+  { prompt: "", command: "     Minimal", output: "" },
+  { prompt: "", command: "", output: "" },
+  { prompt: "?", command: " Project name:", output: "  → my-saas-app" },
+  { prompt: "?", command: " Initialize git repository?", output: "  → Yes" },
+  { prompt: "?", command: " Push to GitHub?", output: "  → Yes" },
+  { prompt: "?", command: " Install dependencies automatically?", output: "  → Yes" },
+  { prompt: "", command: "", output: "" },
+  { prompt: "", command: "  Creating project structure...", output: "✓" },
+  { prompt: "", command: "  Generating code...", output: "✓" },
+  { prompt: "", command: "  Applying design system...", output: "✓" },
+  { prompt: "", command: "", output: "" },
+  { prompt: "", command: "  🚀 UIForge Ready!", output: "" },
 ];
 
 export default function CLIDemo() {
@@ -163,7 +185,7 @@ export default function CLIDemo() {
             >
               <span style={{ color: "#a855f7", fontWeight: "bold" }}>✨</span>{" "}
               <span style={{ color: "#fff" }}>UIForge</span>{" "}
-              <span style={{ color: "rgba(255,255,255,0.5)" }}>v1.0</span>
+              <span style={{ color: "rgba(255,255,255,0.5)" }}>v1.4.0</span>
             </div>
 
             {/* Commands */}
@@ -173,18 +195,30 @@ export default function CLIDemo() {
                 initial={{ opacity: 0, x: -10 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.15, duration: 0.3 }}
+                transition={{ delay: index * 0.08, duration: 0.2 }}
               >
-                <div style={{ display: "flex", gap: "8px" }}>
-                  <span style={{ color: "#6366f1" }}>{item.prompt}</span>
-                  <span style={{ color: "#e2e8f0" }}>{item.command}</span>
+                <div style={{ display: "flex", gap: "8px", color: "#e2e8f0" }}>
+                  {item.prompt && (
+                    <span style={{ color: "#6366f1", minWidth: "20px" }}>{item.prompt}</span>
+                  )}
+                  <span 
+                    style={{ 
+                      color: item.command?.startsWith("  ═") || item.command?.startsWith("║") || item.command?.startsWith("╔") || item.command?.startsWith("╚") 
+                        ? "#a855f7" 
+                        : item.command?.includes("?") 
+                          ? "#fbbf24" 
+                          : "#e2e8f0"
+                    }}
+                  >
+                    {item.command}
+                  </span>
                 </div>
                 {item.output && (
                   <div
                     style={{
                       color: "#22c55e",
-                      marginLeft: "16px",
-                      marginTop: "4px",
+                      marginLeft: "0px",
+                      marginTop: "2px",
                     }}
                   >
                     {item.output}
