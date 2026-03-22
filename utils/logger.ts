@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-// @ts-ignore - gradient-string has no types
 import gradient from 'gradient-string';
 import ora, { type Ora } from 'ora';
 
@@ -14,14 +13,34 @@ const theme = {
 };
 
 const asciiLogo = `
-${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ╔═══════════════════════════════════════════════════════════╗')}
-${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ║')}  ${chalk.white('██╗   ██╗██╗ ██████╗████████╗ ██████╗ ██████╗ ██╗   ██╗')}  ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
-${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ║')}  ${chalk.white('██║   ██║██║██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝')}  ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
-${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ║')}  ${chalk.white('██║   ██║██║██║        ██║   ██║   ██║██████╔╝ ╚████╔╝')}  ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
-${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ║')}  ${chalk.white('╚██╗ ██╔╝██║██║        ██║   ██║   ██║██╔══██╗  ╚██╔╝')}  ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
-${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ║')}  ${chalk.white(' ╚████╔╝ ██║╚██████╗   ██║   ╚██████╔╝██║  ██║   ██║')}  ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
-${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ║')}  ${chalk.white('  ╚═══╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝')}  ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
-${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('    ╚═══════════════════════════════════════════════════════════╝')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('     ██╗   ██╗██╗ ██████╗████████╗ ██████╗ ██████╗ ██╗   ██╗')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('     ██║   ██║██║██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('     ██║   ██║██║██║        ██║   ██║   ██║██████╔╝ ╚████╔╝')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('     ╚██╗ ██╔╝██║██║        ██║   ██║   ██║██╔══██╗  ╚██╔╝')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('      ╚████╔╝ ██║╚██████╗   ██║   ╚██████╔╝██║  ██║   ██║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('       ╚═══╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('                ███████╗██╗ ██████╗ ███╗   ██╗ █████╗ ██╗')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('                ██╔════╝██║██╔════╝ ████╗  ██║██╔══██╗██║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('                ███████╗██║██║  ███╗██╔██╗ ██║███████║██║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('                ╚════██║██║██║   ██║██║╚██╗██║██╔══██║██║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('                ███████║██║╚██████╔╝██║ ╚████║██║  ██║███████╗')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('                ╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝')}
+`;
+
+const coolBanner = `
+${chalk.cyan('  ╔══════════════════════════════════════════════════════════════════╗')}
+${chalk.cyan('  ║')}                                                                      ${chalk.cyan('║')}
+${chalk.cyan('  ║')}  ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])('██╗   ██╗██╗ ██████╗████████╗ ██████╗ ██████╗ ██╗   ██╗')}   ${chalk.cyan('║')}
+${chalk.cyan('  ║')}  ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])('██║   ██║██║██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝')}   ${chalk.cyan('║')}
+${chalk.cyan('  ║')}  ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])('██║   ██║██║██║        ██║   ██║   ██║██████╔╝ ╚████╔╝')}   ${chalk.cyan('║')}
+${chalk.cyan('  ║')}  ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])('╚██╗ ██╔╝██║██║        ██║   ██║   ██║██╔══██╗  ╚██╔╝')}   ${chalk.cyan('║')}
+${chalk.cyan('  ║')}  ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])(' ╚████╔╝ ██║╚██████╗   ██║   ╚██████╔╝██║  ██║   ██║')}   ${chalk.cyan('║')}
+${chalk.cyan('  ║')}  ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])('  ╚═══╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝')}   ${chalk.cyan('║')}
+${chalk.cyan('  ║')}                                                                      ${chalk.cyan('║')}
+${chalk.cyan('  ║')}  ${chalk.white('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')}   ${chalk.cyan('║')}
+${chalk.cyan('  ║')}  ${chalk.gray('         Build stunning UIs in seconds, not days')}                 ${chalk.cyan('║')}
+${chalk.cyan('  ║')}                                                                      ${chalk.cyan('║')}
+${chalk.cyan('  ╚══════════════════════════════════════════════════════════════════╝')}
 `;
 
 const miniLogo = `
@@ -31,20 +50,22 @@ ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('  ║')}  ${chalk.gray('Premium U
 ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('  ╚══════════════════════════════════════╝')}
 `;
 
-const coolBanner = `
-${chalk.cyan('    ┌─────────────────────────────────────────────────────────────┐')}
-${chalk.cyan('    │')}                                                             ${chalk.cyan('│')}
-${chalk.cyan('    │')}   ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])('██╗   ██╗██╗ ██████╗████████╗ ██████╗ ██████╗ ██╗   ██╗')}   ${chalk.cyan('│')}
-${chalk.cyan('    │')}   ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])('██║   ██║██║██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝')}   ${chalk.cyan('│')}
-${chalk.cyan('    │')}   ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])('██║   ██║██║██║        ██║   ██║   ██║██████╔╝ ╚████╔╝')}   ${chalk.cyan('│')}
-${chalk.cyan('    │')}   ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])('╚██╗ ██╔╝██║██║        ██║   ██║   ██║██╔══██╗  ╚██╔╝')}   ${chalk.cyan('│')}
-${chalk.cyan('    │')}   ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])(' ╚████╔╝ ██║╚██████╗   ██║   ╚██████╔╝██║  ██║   ██║')}   ${chalk.cyan('│')}
-${chalk.cyan('    │')}   ${gradient(['#f472b6', '#c084fc', '#818cf8', '#22d3ee'])('  ╚═══╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝')}   ${chalk.cyan('│')}
-${chalk.cyan('    │')}                                                             ${chalk.cyan('│')}
-${chalk.cyan('    │')}   ${chalk.white('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')}   ${chalk.cyan('│')}
-${chalk.cyan('    │')}   ${chalk.gray('          Build stunning UIs in seconds, not days')}           ${chalk.cyan('│')}
-${chalk.cyan('    │')}                                                             ${chalk.cyan('│')}
-${chalk.cyan('    └─────────────────────────────────────────────────────────────┘')}
+const welcomeScreen = `
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('╔══════════════════════════════════════════════════════════════════════╗')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}  ${chalk.bold.white('███████╗██╗ ██████╗ ███╗   ██╗████████╗ ██████╗ ██████╗ ██╗   ██╗')}  ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}  ${chalk.bold.white('██╔════╝██║██╔════╝ ████╗  ██║╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝')}  ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}  ${chalk.bold.white('███████╗██║██║  ███╗██╔██╗ ██║   ██║   ██║   ██║██████╔╝ ╚████╔╝')}   ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}  ${chalk.bold.white('╚════██║██║██║   ██║██║╚██╗██║   ██║   ██║   ██║██╔══██╗  ╚██╔╝')}   ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}  ${chalk.bold.white('███████║██║╚██████╔╝██║ ╚████║   ██║   ╚██████╔╝██║  ██║   ██║')}   ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}  ${chalk.bold.white('╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝')}   ${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('║')}
+${gradient(['#6366f1', '#8b5cf6', '#a855f7'])('╚══════════════════════════════════════════════════════════════════════╝')}
 `;
 
 interface Step {
@@ -132,6 +153,16 @@ export const logger = {
     console.log();
   },
 
+  welcome: () => {
+    console.log();
+    console.log(welcomeScreen);
+    console.log();
+    console.log(`  ${chalk.gray('━'.repeat(76))}`);
+    console.log(`  ${chalk.cyan('◆')}  ${chalk.bold.white('What would you like to build today?')}`);
+    console.log(`  ${chalk.gray('━'.repeat(76))}`);
+    console.log();
+  },
+
   miniLogo: () => {
     console.log();
     console.log(miniLogo);
@@ -213,6 +244,18 @@ export const logger = {
     console.log(chalk.gray('  ' + '─'.repeat(50)));
   },
 
+  section: (title: string) => {
+    console.log();
+    console.log(chalk.bold.cyan(`  ▸ ${title}`));
+    console.log();
+  },
+
+  option: (key: string, label: string, description?: string) => {
+    const keyStr = chalk.bold.cyan(`[${key}]`);
+    const desc = description ? chalk.gray(` - ${description}`) : '';
+    console.log(`    ${keyStr} ${label}${desc}`);
+  },
+
   nextSteps: (projectName: string) => {
     console.log();
     console.log(chalk.bold.white('  Next steps:'));
@@ -276,4 +319,5 @@ export const logger = {
   theme: theme as Record<string, any>,
   asciiLogo,
   coolBanner,
+  welcomeScreen,
 };

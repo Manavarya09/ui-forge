@@ -1,7 +1,7 @@
 {
   "name": "@manavarya0909/ui-forge-cli",
-  "version": "1.2.2",
-  "description": "Generate production-grade UI systems and backends in seconds - Frontend with Next.js, Tailwind, Framer Motion | Backend with Express, REST, GraphQL",
+  "version": "1.4.0",
+  "description": "Generate production-grade UI systems and backends in seconds - Frontend with Next.js, Tailwind | Backend with Express, Database, Auth",
   "type": "module",
   "bin": {
     "uiforge": "./dist/cli/index.js"

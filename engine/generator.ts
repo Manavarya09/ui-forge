@@ -35,6 +35,17 @@ export interface GenerationOptions {
   primaryColor?: string;
   font?: string;
   style?: string;
+  apiKey?: string;
+}
+
+export interface BackendOptions {
+  projectName: string;
+  template: string;
+  outputDir: string;
+  database?: string | null;
+  auth?: string | null;
+  design?: string | null;
+  apiKey?: string;
 }
 
 export interface GeneratedCopy {
@@ -1081,6 +1092,802 @@ export default function Navbar() {
 
   private sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async createBackend(options: BackendOptions): Promise<void> {
+    const { projectName, template, outputDir, database, auth, design, apiKey } = options;
+    const projectPath = path.join(outputDir, projectName);
+
+    await ensureDir(projectPath);
+    await ensureDir(path.join(projectPath, "src"));
+    await ensureDir(path.join(projectPath, "src", "routes"));
+    await ensureDir(path.join(projectPath, "src", "controllers"));
+    await ensureDir(path.join(projectPath, "src", "models"));
+    await ensureDir(path.join(projectPath, "src", "middleware"));
+    await ensureDir(path.join(projectPath, "src", "services"));
+    await ensureDir(path.join(projectPath, "src", "utils"));
+    await ensureDir(path.join(projectPath, "prisma"));
+    await ensureDir(path.join(projectPath, "tests"));
+
+    const packageJson = {
+      name: projectName,
+      version: "1.0.0",
+      private: true,
+      scripts: {
+        dev: "tsx watch src/index.ts",
+        build: "tsc",
+        start: "node dist/index.js",
+        test: "jest",
+        "db:generate": "prisma generate",
+        "db:push": "prisma db push",
+        "db:migrate": "prisma migrate dev",
+      },
+      dependencies: {
+        express: "^4.18.2",
+        "express-rate-limit": "^7.1.5",
+        "express-validator": "^7.0.1",
+        cors: "^2.8.5",
+        helmet: "^7.1.0",
+        morgan: "^1.10.0",
+        dotenv: "^16.3.1",
+        jsonwebtoken: "^9.0.2",
+        bcryptjs: "^2.4.3",
+        "bcrypt": "^5.1.1",
+        "uuid": "^9.0.1",
+        zod: "^3.22.4",
+      },
+      devDependencies: {
+        typescript: "^5.3.3",
+        "@types/node": "^20.10.6",
+        "@types/express": "^4.17.21",
+        "@types/cors": "^2.8.17",
+        "@types/morgan": "^1.9.9",
+        "@types/jsonwebtoken": "^9.0.5",
+        "@types/bcryptjs": "^2.4.6",
+        "@types/uuid": "^9.0.7",
+        tsx: "^4.7.0",
+        prisma: "^5.8.0",
+        jest: "^29.7.0",
+        "@types/jest": "^29.5.11",
+        "ts-jest": "^29.1.1",
+        eslint: "^8.56.0",
+        "typescript-eslint": "^6.18.1",
+      },
+    };
+
+    await writeFile(
+      path.join(projectPath, "package.json"),
+      JSON.stringify(packageJson, null, 2)
+    );
+
+    await writeFile(
+      path.join(projectPath, "tsconfig.json"),
+      JSON.stringify({
+        compilerOptions: {
+          target: "ES2022",
+          lib: ["ES2022"],
+          module: "NodeNext",
+          moduleResolution: "NodeNext",
+          outDir: "./dist",
+          rootDir: "./src",
+          strict: true,
+          esModuleInterop: true,
+          skipLibCheck: true,
+          forceConsistentCasingInFileNames: true,
+          resolveJsonModule: true,
+          declaration: true,
+          declarationMap: true,
+        },
+        include: ["src/**/*"],
+        exclude: ["node_modules", "dist", "tests"],
+      }, null, 2)
+    );
+
+    await writeFile(
+      path.join(projectPath, "src", "index.ts"),
+      `import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'dotenv';
+import rateLimit from 'express-rate-limit';
+import { errorHandler } from './middleware/errorHandler.js';
+import { authRouter } from './routes/auth.js';
+import { userRouter } from './routes/user.js';
+import { productRouter } from './routes/product.js';
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(helmet());
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || '*',
+  credentials: true,
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+app.use(limiter);
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+app.use('/api/auth', authRouter);
+app.use('/api/users', userRouter);
+app.use('/api/products', productRouter);
+
+app.use(errorHandler);
+
+app.listen(PORT, () => {
+  console.log(\`Server running on port \${PORT}\`);
+});
+
+export default app;
+`
+    );
+
+    await writeFile(
+      path.join(projectPath, "src", "middleware", "errorHandler.ts"),
+      `import { Request, Response, NextFunction } from 'express';
+
+export class AppError extends Error {
+  statusCode: number;
+  isOperational: boolean;
+
+  constructor(message: string, statusCode: number) {
+    super(message);
+    this.statusCode = statusCode;
+    this.isOperational = true;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+export const errorHandler = (
+  err: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (err instanceof AppError) {
+    return res.status(err.statusCode).json({
+      status: 'error',
+      message: err.message,
+    });
+  }
+
+  console.error('Error:', err);
+
+  return res.status(500).json({
+    status: 'error',
+    message: 'Internal server error',
+  });
+};
+`
+    );
+
+    await writeFile(
+      path.join(projectPath, "src", "middleware", "auth.ts"),
+      `import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+
+export interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+  };
+}
+
+export const authenticate = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'No token provided',
+      });
+    }
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: string; email: string };
+
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      status: 'error',
+      message: 'Invalid token',
+    });
+  }
+};
+
+export const authorize = (...roles: string[]) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Not authenticated',
+      });
+    }
+    next();
+  };
+};
+`
+    );
+
+    await writeFile(
+      path.join(projectPath, "src", "routes", "auth.ts"),
+      `import { Router } from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { body, validationResult } from 'express-validator';
+
+const router = Router();
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+
+interface User {
+  id: string;
+  email: string;
+  password: string;
+  name: string;
+  createdAt: Date;
+}
+
+const users: User[] = [];
+
+router.post(
+  '/register',
+  [
+    body('email').isEmail().normalizeEmail(),
+    body('password').isLength({ min: 8 }),
+    body('name').trim().notEmpty(),
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          status: 'error',
+          errors: errors.array(),
+        });
+      }
+
+      const { email, password, name } = req.body;
+
+      const existingUser = users.find((u) => u.email === email);
+      if (existingUser) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Email already in use',
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 12);
+
+      const newUser: User = {
+        id: crypto.randomUUID(),
+        email,
+        password: hashedPassword,
+        name,
+        createdAt: new Date(),
+      };
+
+      users.push(newUser);
+
+      const token = jwt.sign(
+        { id: newUser.id, email: newUser.email },
+        JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+
+      res.status(201).json({
+        status: 'success',
+        data: {
+          user: {
+            id: newUser.id,
+            email: newUser.email,
+            name: newUser.name,
+          },
+          token,
+        },
+      });
+    } catch (error) {
+      res.status(500).json({
+        status: 'error',
+        message: 'Registration failed',
+      });
+    }
+  }
+);
+
+router.post(
+  '/login',
+  [
+    body('email').isEmail().normalizeEmail(),
+    body('password').notEmpty(),
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          status: 'error',
+          errors: errors.array(),
+        });
+      }
+
+      const { email, password } = req.body;
+
+      const user = users.find((u) => u.email === email);
+      if (!user) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Invalid credentials',
+        });
+      }
+
+      const isValid = await bcrypt.compare(password, user.password);
+      if (!isValid) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Invalid credentials',
+        });
+      }
+
+      const token = jwt.sign(
+        { id: user.id, email: user.email },
+        JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+
+      res.json({
+        status: 'success',
+        data: {
+          user: {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+          },
+          token,
+        },
+      });
+    } catch (error) {
+      res.status(500).json({
+        status: 'error',
+        message: 'Login failed',
+      });
+    }
+  }
+);
+
+export { router as authRouter };
+`
+    );
+
+    await writeFile(
+      path.join(projectPath, "src", "routes", "user.ts"),
+      `import { Router } from 'express';
+import { authenticate, AuthRequest } from '../middleware/auth.js';
+
+const router = Router();
+
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  avatar?: string;
+  bio?: string;
+  createdAt: Date;
+}
+
+const users: User[] = [];
+
+router.get('/', authenticate, (req: AuthRequest, res) => {
+  const userList = users.map(u => ({
+    id: u.id,
+    email: u.email,
+    name: u.name,
+    avatar: u.avatar,
+    bio: u.bio,
+  }));
+  
+  res.json({
+    status: 'success',
+    data: userList,
+  });
+});
+
+router.get('/:id', authenticate, (req: AuthRequest, res) => {
+  const user = users.find(u => u.id === req.params.id);
+  
+  if (!user) {
+    return res.status(404).json({
+      status: 'error',
+      message: 'User not found',
+    });
+  }
+  
+  res.json({
+    status: 'success',
+    data: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      avatar: user.avatar,
+      bio: user.bio,
+    },
+  });
+});
+
+router.put('/:id', authenticate, (req: AuthRequest, res) => {
+  const userIndex = users.findIndex(u => u.id === req.params.id);
+  
+  if (userIndex === -1) {
+    return res.status(404).json({
+      status: 'error',
+      message: 'User not found',
+    });
+  }
+  
+  if (users[userIndex].id !== req.user?.id) {
+    return res.status(403).json({
+      status: 'error',
+      message: 'Not authorized',
+    });
+  }
+  
+  const { name, avatar, bio } = req.body;
+  
+  users[userIndex] = {
+    ...users[userIndex],
+    name: name || users[userIndex].name,
+    avatar: avatar || users[userIndex].avatar,
+    bio: bio || users[userIndex].bio,
+  };
+  
+  res.json({
+    status: 'success',
+    data: {
+      id: users[userIndex].id,
+      email: users[userIndex].email,
+      name: users[userIndex].name,
+      avatar: users[userIndex].avatar,
+      bio: users[userIndex].bio,
+    },
+  });
+});
+
+router.delete('/:id', authenticate, (req: AuthRequest, res) => {
+  const userIndex = users.findIndex(u => u.id === req.params.id);
+  
+  if (userIndex === -1) {
+    return res.status(404).json({
+      status: 'error',
+      message: 'User not found',
+    });
+  }
+  
+  if (users[userIndex].id !== req.user?.id) {
+    return res.status(403).json({
+      status: 'error',
+      message: 'Not authorized',
+    });
+  }
+  
+  users.splice(userIndex, 1);
+  
+  res.json({
+    status: 'success',
+    message: 'User deleted',
+  });
+});
+
+export { router as userRouter };
+`
+    );
+
+    await writeFile(
+      path.join(projectPath, "src", "routes", "product.ts"),
+      `import { Router } from 'express';
+import { authenticate } from '../middleware/auth.js';
+
+const router = Router();
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  image?: string;
+  stock: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const products: Product[] = [];
+
+router.get('/', (req, res) => {
+  const { category, search, limit = 10, offset = 0 } = req.query;
+  
+  let filtered = [...products];
+  
+  if (category) {
+    filtered = filtered.filter(p => p.category === category);
+  }
+  
+  if (search) {
+    const searchLower = (search as string).toLowerCase();
+    filtered = filtered.filter(p => 
+      p.name.toLowerCase().includes(searchLower) ||
+      p.description.toLowerCase().includes(searchLower)
+    );
+  }
+  
+  const limitNum = parseInt(limit as string);
+  const offsetNum = parseInt(offset as string);
+  
+  const paginated = filtered.slice(offsetNum, offsetNum + limitNum);
+  
+  res.json({
+    status: 'success',
+    data: paginated,
+    meta: {
+      total: filtered.length,
+      limit: limitNum,
+      offset: offsetNum,
+    },
+  });
+});
+
+router.get('/:id', (req, res) => {
+  const product = products.find(p => p.id === req.params.id);
+  
+  if (!product) {
+    return res.status(404).json({
+      status: 'error',
+      message: 'Product not found',
+    });
+  }
+  
+  res.json({
+    status: 'success',
+    data: product,
+  });
+});
+
+router.post('/', authenticate, (req, res) => {
+  const { name, description, price, category, image, stock } = req.body;
+  
+  const newProduct: Product = {
+    id: crypto.randomUUID(),
+    name,
+    description,
+    price,
+    category,
+    image,
+    stock: stock || 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+  
+  products.push(newProduct);
+  
+  res.status(201).json({
+    status: 'success',
+    data: newProduct,
+  });
+});
+
+router.put('/:id', authenticate, (req, res) => {
+  const productIndex = products.findIndex(p => p.id === req.params.id);
+  
+  if (productIndex === -1) {
+    return res.status(404).json({
+      status: 'error',
+      message: 'Product not found',
+    });
+  }
+  
+  const { name, description, price, category, image, stock } = req.body;
+  
+  products[productIndex] = {
+    ...products[productIndex],
+    name: name || products[productIndex].name,
+    description: description || products[productIndex].description,
+    price: price || products[productIndex].price,
+    category: category || products[productIndex].category,
+    image: image || products[productIndex].image,
+    stock: stock !== undefined ? stock : products[productIndex].stock,
+    updatedAt: new Date(),
+  };
+  
+  res.json({
+    status: 'success',
+    data: products[productIndex],
+  });
+});
+
+router.delete('/:id', authenticate, (req, res) => {
+  const productIndex = products.findIndex(p => p.id === req.params.id);
+  
+  if (productIndex === -1) {
+    return res.status(404).json({
+      status: 'error',
+      message: 'Product not found',
+    });
+  }
+  
+  products.splice(productIndex, 1);
+  
+  res.json({
+    status: 'success',
+    message: 'Product deleted',
+  });
+});
+
+export { router as productRouter };
+`
+    );
+
+    await writeFile(
+      path.join(projectPath, ".env.example"),
+      `PORT=3000
+NODE_ENV=development
+
+JWT_SECRET=your-super-secret-jwt-key-change-in-production
+JWT_EXPIRES_IN=7d
+
+CORS_ORIGIN=http://localhost:3000
+
+DATABASE_URL=postgresql://user:password@localhost:5432/mydb
+
+# For production, use proper secret values
+# Do not commit .env file to version control
+`
+    );
+
+    if (database === 'prisma') {
+      await writeFile(
+        path.join(projectPath, "prisma", "schema.prisma"),
+        `generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  avatar    String?
+  bio       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts     Post[]
+  comments  Comment[]
+}
+
+model Post {
+  id        String    @id @default(uuid())
+  title     String
+  content   String
+  published Boolean   @default(false)
+  authorId  String
+  author    User      @relation(fields: [authorId], references: [id])
+  comments  Comment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+}
+`
+      );
+    }
+
+    await writeFile(
+      path.join(projectPath, "src", "utils", "helpers.ts"),
+      `import { validationResult } from 'express-validator';
+import { Request, Response, NextFunction } from 'express';
+
+export const validate = (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      status: 'error',
+      errors: errors.array(),
+    });
+  }
+  next();
+};
+
+export const asyncHandler = (fn: Function) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+};
+
+export const paginate = (query: any) => {
+  const page = parseInt(query.page) || 1;
+  const limit = parseInt(query.limit) || 10;
+  const skip = (page - 1) * limit;
+  
+  return { page, limit, skip };
+};
+`
+    );
+
+    await writeFile(
+      path.join(projectPath, "jest.config.js"),
+      `export default {
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  roots: ['<rootDir>/tests'],
+  testMatch: ['**/*.test.ts'],
+  moduleFileExtensions: ['ts', 'js', 'json'],
+  collectCoverageFrom: ['src/**/*.ts'],
+  coverageDirectory: 'coverage',
+};
+`
+    );
+
+    await writeFile(
+      path.join(projectPath, "tests", "auth.test.ts"),
+      `import request from 'supertest';
+import app from '../src/index.js';
+
+describe('Auth Endpoints', () => {
+  it('should register a new user', async () => {
+    const response = await request(app)
+      .post('/api/auth/register')
+      .send({
+        email: 'test@example.com',
+        password: 'password123',
+        name: 'Test User',
+      });
+    
+    expect(response.status).toBe(201);
+    expect(response.body.status).toBe('success');
+  });
+
+  it('should login user', async () => {
+    const response = await request(app)
+      .post('/api/auth/login')
+      .send({
+        email: 'test@example.com',
+        password: 'password123',
+      });
+    
+    expect(response.status).toBe(200);
+    expect(response.body.status).toBe('success');
+  });
+});
+`
+    );
+
+    logger.success("Full backend with database code generated");
   }
 }
 

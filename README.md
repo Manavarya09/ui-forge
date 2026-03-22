@@ -1,394 +1,339 @@
 # UIForge
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-1.1.0-6366f1?style=for-the-badge&labelColor=0a0a0a" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-1.4.0-6366f1?style=for-the-badge&labelColor=0a0a0a" alt="Version" />
   <img src="https://img.shields.io/badge/License-MIT-a855f7?style=for-the-badge&labelColor=0a0a0a" alt="License" />
   <img src="https://img.shields.io/badge/Node-18+-22c55e?style=for-the-badge&labelColor=0a0a0a" alt="Node" />
-  <img src="https://img.shields.io/badge/NPM-@manavarya0909/ui-forge--cli-fc521f?style=for-the-badge&labelColor=0a0a0a" alt="npm" />
 </p>
 
 <p align="center">
-  <strong>Generate production-grade UI systems with 12 design styles. One command to production-ready Next.js, Tailwind and Framer Motion code.</strong>
+  <strong>Build production-grade UI systems and backends in seconds. Frontend with Next.js + Tailwind | Backend with Express + Database</strong>
 </p>
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
-### Installation
+### One Command - Complete Project
 
+```bash
+npx uiforge
+```
+
+That's it! The interactive CLI will guide you through:
+1. **Choose template** (Frontend, Backend, or Full Stack)
+2. **Select design language** (12 styles - or skip)
+3. **Pick database** (for backend/fullstack)
+4. **Choose auth** (optional)
+5. **Auto-push to GitHub** (optional)
+
+---
+
+## 📦 Installation
+
+### Using npx (Recommended)
+```bash
+npx uiforge create saas-modern my-app
+```
+
+### Install Globally
 ```bash
 npm install -g @manavarya0909/ui-forge-cli
+uiforge create saas-modern my-app
 ```
 
-Or use with npx:
+---
 
+## 🎯 All Features
+
+### Frontend Templates
+- **12 Design Styles**: glass, minimal, brutalism, enterprise, bento, neumorphism, flat, material, dark-minimal, tech-futurism, monochrome, swiss
+- **Production Ready**: Next.js 14, Tailwind CSS, Framer Motion, shadcn/ui components
+
+### Backend Features
+- **Full Code Generation** - Not just configs! Complete API with:
+  - Express.js server setup
+  - RESTful routes (auth, users, products)
+  - Middleware (error handling, auth)
+  - Database integration (Prisma/Drizzle)
+  - TypeScript throughout
+- **Authentication**: Clerk, NextAuth.js, Supabase Auth
+- **Databases**: PostgreSQL, MongoDB (via Prisma/Drizzle)
+
+### AI-Powered
+- **Design Language Application**: AI applies chosen design to template automatically
+- **Smart Copy Generation**: Marketing content via Ollama or Groq
+
+### Developer Experience
+- **GitHub Push**: Auto-initialize and push to GitHub
+- **Auto Install**: Dependencies installed automatically
+- **TypeScript**: Full type safety everywhere
+
+---
+
+## 💻 Usage Examples
+
+### Interactive Mode (Recommended)
 ```bash
-npx @manavarya0909/ui-forge-cli create saas my-app
+npx uiforge
+# CLI prompts for all choices
 ```
 
-### Create a Project
-
+### Create Frontend Only
 ```bash
-uiforge create saas my-app
-uiforge create saas my-app --style glass
-uiforge create saas my-app --style brutalism --ai
+npx uiforge create saas-modern my-app --style glass
 ```
 
-### Run the Project
+### Create Backend with Database
+```bash
+npx uiforge backend my-api --database prisma --auth nextauth
+```
+
+### Full Stack with GitHub Push
+```bash
+npx uiforge app --name my-fullstack --database prisma --push --git
+```
+
+### Quick Create
+```bash
+# Create with all defaults
+npx uiforge create saas my-app
+
+# Create with design style
+npx uiforge create saas my-app --style glass
+
+# Create with options
+npx uiforge create saas my-app --style brutalism --git --install
+```
+
+---
+
+## 📋 CLI Commands
+
+### Main Commands
+
+| Command | Description |
+|---------|-------------|
+| `npx uiforge` | Interactive mode (recommended) |
+| `npx uiforge app` | Full-stack generator |
+| `npx uiforge create [template]` | Create frontend project |
+| `npx uiforge backend [name]` | Create backend API |
+| `npx uiforge list` | List all templates |
+| `npx uiforge styles` | List design styles |
+
+### Options
 
 ```bash
-cd my-app
+# Template options
+--style <style>        Design style (minimal, glass, brutalism, etc.)
+--color <hex>         Primary color
+--font <font>         Google Font
+--dark                Enable dark mode
+
+# Project options
+-n, --name <name>     Project name
+-o, --output <dir>    Output directory
+
+# Backend options
+-d, --database <db>   Database: prisma, drizzle, mongodb
+-a, --auth <auth>     Auth: clerk, nextauth, supabase
+
+# Automation options
+--git                 Initialize git
+--push                Push to GitHub
+--install             Auto-install dependencies
+
+# AI options
+--ai                  Enable AI copy generation
+--api-key <key>       AI API key for design language
+```
+
+### Examples
+
+```bash
+# Frontend with design style
+uiforge create saas-modern my-app --style glass
+
+# Frontend with all options
+uiforge create portfolio my-portfolio --style minimal --git --install
+
+# Backend with database
+uiforge backend my-api --database prisma
+
+# Full stack
+uiforge app --name my-app --database prisma --auth nextauth --push
+```
+
+---
+
+## 🎨 Design Styles
+
+| Style | Description | Best For |
+|-------|-------------|----------|
+| `glass` | Frosted glass, transparency | Modern apps |
+| `minimal` | Clean whitespace | Portfolios |
+| `brutalism` | Bold, high contrast | Creative sites |
+| `enterprise` | Professional, structured | Business apps |
+| `bento` | Grid boxes layout | Dashboards |
+| `neumorphism` | Soft shadows | Mobile apps |
+| `material` | Layered UI | Android-style |
+| `dark-minimal` | Dark theme | Developer tools |
+| `tech-futurism` | Neon, glow effects | Tech products |
+| `monochrome` | Single color tones | Sophisticated |
+| `swiss` | Grid typography | Minimal brands |
+| `flat` | No depth | Simple apps |
+
+### View Design Docs
+```bash
+uiforge styles --docs
+```
+
+---
+
+## 📂 Templates
+
+### Frontend Templates
+- `saas` - SaaS landing with pricing
+- `saas-modern` - Modern bento-style SaaS
+- `portfolio` - Creative portfolio
+- `dashboard` - Analytics dashboard
+- `marketplace` - E-commerce landing
+- `agency` - Business services
+- `ai-product` - AI product showcase
+- `real-estate` - Property showcase
+- `ecommerce` - Shop dashboard
+- `fitness` - Gym landing
+- `tactical-dashboard` - Operations center
+- `premium-landing` - Full-featured
+
+### Backend Templates
+- `api-express` - Express.js REST API
+- `api-next` - Next.js API routes
+
+---
+
+## 🗄️ Backend Generation
+
+### What's Generated (Full Code, Not Configs!)
+
+```
+src/
+├── index.ts              # Express server
+├── routes/
+│   ├── auth.ts          # Login/register endpoints
+│   ├── user.ts          # CRUD for users
+│   └── product.ts       # CRUD for products
+├── middleware/
+│   ├── auth.ts          # JWT authentication
+│   └── errorHandler.ts  # Error handling
+├── utils/
+│   └── helpers.ts       # Utility functions
+└── tests/
+    └── auth.test.ts     # Test file
+
+prisma/
+└── schema.prisma        # Database schema
+
+package.json             # Dependencies + scripts
+tsconfig.json           # TypeScript config
+.env.example            # Environment variables
+```
+
+### API Endpoints Created
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Register user |
+| POST | `/api/auth/login` | Login |
+| GET | `/api/users` | List users |
+| GET | `/api/products` | List products |
+| POST | `/api/products` | Create product |
+| PUT | `/api/products/:id` | Update product |
+| DELETE | `/api/products/:id` | Delete product |
+
+---
+
+## 🔧 Development
+
+### Run Locally
+```bash
+git clone https://github.com/Manavarya09/ui-forge.git
+cd ui-forge
 npm install
+npm run build
 npm run dev
 ```
 
 ---
 
-## Features
+## 🤖 AI Setup
 
-- **12 Design Styles** - Glass, Brutalism, Minimal, Enterprise, Bento, Neumorphism, Flat, Material, Dark Minimal, Tech Futurism, Monochrome, Swiss
-- **12 Production Templates** - SaaS, Portfolio, Dashboard, Marketplace, Agency, AI Product, Real Estate, E-Commerce, Fitness, Tactical Dashboard, Premium Landing
-- **AI-Powered Copy** - Generate marketing copy with Ollama or Groq
-- **Premium Animations** - Framer Motion animations included
-- **TypeScript** - Full type safety throughout
-- **Tailwind CSS** - Utility-first styling with design tokens
-- **shadcn/ui** - Beautiful, accessible components
-- **Deploy Ready** - One-command deployment to Vercel or Netlify
-
----
-
-## Design Styles
-
-Apply a design language to any template for instant visual transformation:
-
-| Style | Description |
-|-------|-------------|
-| `glass` | Frosted glass panels with soft transparency |
-| `minimal` | Clean, minimalist design with generous whitespace |
-| `brutalism` | Bold typography, strong grid, high contrast |
-| `enterprise` | Clean, functional, professional design |
-| `bento` | Modular, boxed layout with flexible cards |
-| `neumorphism` | Soft shadows, subtle depth, tactile UI |
-| `flat` | No depth effects, clean shapes |
-| `material` | Layered UI, consistent spacing system |
-| `dark-minimal` | Dark background, high contrast text |
-| `tech-futurism` | Glow effects, gradients, sleek feel |
-| `monochrome` | Single color with tonal variations |
-| `swiss` | Strong grid system, clean typography |
-
-### Examples
-
-```bash
-uiforge create saas my-app --style glass
-uiforge create agency my-app --style brutalism
-uiforge create saas-modern my-app --style bento
-uiforge create portfolio my-app --style dark-minimal
-uiforge create ai-product my-app --style tech-futurism
-```
-
----
-
-## Templates
-
-| Template | Description | Tags |
-|----------|-------------|------|
-| **saas** | Conversion-focused landing with pricing and testimonials | saas, startup, product |
-| **saas-modern** | Modern SaaS with bento grid and dashboard preview | saas, modern, bento |
-| **portfolio** | Creative portfolio with case studies and contact | portfolio, creative |
-| **dashboard** | Analytics admin with charts and data tables | dashboard, admin, analytics |
-| **marketplace** | Multi-vendor e-commerce landing | marketplace, ecommerce |
-| **agency** | Professional services with portfolio | agency, business |
-| **ai-product** | AI capabilities showcase | ai, ml, tech |
-| **real-estate** | 3D property showcase | real-estate, 3d |
-| **ecommerce** | Full e-commerce dashboard | ecommerce, shop |
-| **fitness** | Bold gym landing with programs | fitness, gym |
-| **tactical-dashboard** | Military-inspired operations center | dashboard, tactical |
-| **premium-landing** | Full-featured landing with animations | landing, premium |
-
-### Examples
-
-```bash
-uiforge create saas my-saas --style glass
-uiforge create portfolio my-portfolio --style minimal
-uiforge create dashboard my-dashboard --style enterprise
-uiforge create ai-product my-ai --style tech-futurism
-uiforge create ecommerce my-shop --style material
-```
-
----
-
-## CLI Commands
-
-### Global Options
-
-```bash
-uiforge --version    # Show version
-uiforge --help       # Show help
-```
-
-### Create Command
-
-```bash
-uiforge create [template] [name] [options]
-
-Aliases: c, new
-
-Options:
-  -n, --name <name>             Project name (default: my-app)
-  -o, --output <dir>            Output directory (default: current directory)
-  -s, --sections <sections>     Specific sections to generate
-  --style <style>               Design style (minimal, glass, brutalism, etc.)
-  --ai                          Enable AI-powered copy generation
-  --git                         Initialize git repository
-  --install                     Auto-install dependencies
-  --color <hex>                 Primary color (hex)
-  --font <font>                 Google Font name
-  -i, --interactive             Interactive selection mode
-```
-
-### List Command
-
-```bash
-uiforge list                    # List all templates
-uiforge ls                     # Alias
-uiforge templates              # Alias
-uiforge list --json            # JSON output
-```
-
-### Styles Command
-
-```bash
-uiforge styles                 # List all design styles
-uiforge style                  # Alias
-uiforge styles --json          # JSON output
-```
-
-### Preview Command
-
-```bash
-uiforge preview [template]     # Preview template in browser
-uiforge preview --template saas --style glass
-```
-
-### Init Command
-
-```bash
-uiforge init                   # Initialize Next.js project
-uiforge init -n my-app --git  # With git init
-```
-
-### Deploy Command
-
-```bash
-uiforge deploy                 # Deploy to Vercel (default)
-uiforge deploy --provider netlify  # Deploy to Netlify
-```
-
-### Other Commands
-
-```bash
-uiforge demo                   # Generate demo project
-uiforge add <section>          # Add a section
-uiforge theme                  # Manage design system
-uiforge components             # Browse components
-uiforge audit                  # Accessibility audit
-uiforge test                   # Setup tests
-```
-
----
-
-## AI Features
-
-### Setup
-
-#### Ollama (Local - Free)
-
+### Option 1: Ollama (Local - Free)
 ```bash
 curl -fsSL https://ollama.ai/install.sh | sh
 ollama pull llama3
 ollama serve
 ```
 
-#### Groq (Cloud - Free Tier)
-
+### Option 2: Groq (Cloud - Free Tier)
 ```bash
-export GROQ_API_KEY=your-api-key
-```
-
-### AI Commands
-
-```bash
-uiforge ai copy          # Generate marketing copy
-uiforge ai suggest       # Get section suggestions
-uiforge create saas my-app --ai
+export GROQ_API_KEY=your-key
 ```
 
 ---
 
-## Development
-
-### Prerequisites
-
-- Node.js 18+
-- npm or yarn
-
-### Setup
-
-```bash
-git clone https://github.com/anomalyco/ui-forge.git
-cd ui-forge
-npm install
-npm run build
-```
-
-### Run Locally
-
-```bash
-npm run dev
-# or
-node dist/cli/index.js create saas my-app
-```
-
-### Project Structure
+## 📝 Project Structure
 
 ```
-uiforge/
-├── cli/                      # Commander.js CLI
-│   └── index.ts              # CLI entry point
-├── engine/                   # Generation engine
-│   ├── generator.ts          # Project generation
-│   ├── registry.ts           # Template registry
-│   ├── components.ts         # Component system
-│   ├── injector.ts           # Code injection
-│   └── testing.ts            # Test generation
-├── templates/                # Source templates
-├── design-languages/         # Design language configs
-├── design-system/           # Design tokens
-├── ai/                      # AI providers
-├── utils/                   # Utilities
-└── examples/                # Example projects
+ui-forge/
+├── cli/                 # CLI commands
+├── engine/              # Code generation
+├── templates/           # Frontend templates
+├── design-languages/    # 12 design styles
+│   └── <style>/README.md
+├── design-system/       # Tailwind tokens
+├── ai/                  # AI providers
+└── utils/               # Helpers
 ```
 
 ---
 
-## Usage Examples
-
-### Basic Usage
+## ⚡ Quick Reference Card
 
 ```bash
-uiforge create saas my-saas
-uiforge create portfolio my-portfolio
-uiforge create dashboard my-dashboard
-```
+# Interactive (recommended)
+npx uiforge
 
-### With Design Styles
+# Create frontend
+npx uiforge create saas-modern my-app --style glass
 
-```bash
-uiforge create saas my-app --style glass
-uiforge create agency my-agency --style brutalism
-uiforge create portfolio my-portfolio --style minimal
-uiforge create dashboard my-dash --style enterprise
-uiforge create saas-modern my-app --style bento
-```
+# Create backend
+npx uiforge backend my-api --database prisma
 
-### With Options
+# Full stack
+npx uiforge app --database prisma --push
 
-```bash
-uiforge create saas my-app -n "my-project" -o ./projects
-uiforge create saas my-app --git
-uiforge create saas my-app --install
-uiforge create saas my-app --color #6366f1
-uiforge create saas my-app --font Inter
-uiforge create --interactive
-```
+# List all
+npx uiforge list
+npx uiforge styles
 
-### Combined Examples
-
-```bash
-uiforge create saas my-app --style glass --color #8b5cf6 --font Inter --git --install --ai
-
-uiforge create portfolio my-portfolio --style minimal --git
-
-uiforge create dashboard my-dashboard --style enterprise --install
+# Deploy
+npx uiforge deploy --provider vercel
 ```
 
 ---
 
-## Architecture
+## 🙏 Credits
 
-### Design System Generation
-
-When you run `uiforge create`, the engine:
-
-1. Loads Template - Copies template files to output directory
-2. Loads Design Style - Reads design language config
-3. Generates Tokens - Creates Tailwind config from design tokens
-4. Generates CSS Variables - Creates CSS custom properties
-5. Applies Style - Overwrites template configs with generated design system
-6. Done - Production-ready project with chosen design style
-
-### Design Language Config
-
-```json
-{
-  "name": "glass",
-  "description": "Frosted glass panels with soft transparency",
-  "tokens": {
-    "colors": {
-      "background": "rgba(255, 255, 255, 0.1)",
-      "primary": "#8b5cf6"
-    }
-  },
-  "typography": {
-    "fontFamily": {
-      "sans": ["Plus Jakarta Sans", "system-ui"]
-    }
-  },
-  "effects": {
-    "shadows": {
-      "glass": "0 8px 32px rgba(0, 0, 0, 0.3)"
-    }
-  }
-}
-```
-
----
-
-## Contributing
-
-Contributions are welcome. Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## Acknowledgments
-
-- [Next.js](https://nextjs.org/) - React framework
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS
-- [shadcn/ui](https://ui.shadcn.com/) - UI components
-- [Framer Motion](https://www.framer.com/motion/) - Animations
-- [Radix UI](https://www.radix-ui.com/) - Headless components
+- [Next.js](https://nextjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [shadcn/ui](https://ui.shadcn.com/)
+- [Framer Motion](https://www.framer.com/motion/)
+- [Express.js](https://expressjs.com/)
+- [Prisma](https://www.prisma.io/)
 
 ---
 
 <p align="center">
-  Built by <a href="https://github.com/Manavarya09">Manav Arya Singh</a>
-</p>
-
-<p align="center">
-  <a href="https://www.npmjs.com/package/@manavarya0909/ui-forge-cli">
-    <img src="https://img.shields.io/npm/dt/@manavarya0909/ui-forge-cli?style=for-the-badge&labelColor=0a0a0a" alt="npm downloads" />
-  </a>
+  Built with ❤️ by <a href="https://github.com/Manavarya09">Manav Arya Singh</a>
 </p>
