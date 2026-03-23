@@ -1,0 +1,28 @@
+{
+  "name": "fastapi-postgres",
+  "version": "1.0.0",
+  "description": "FastAPI + PostgreSQL REST API template",
+  "main": "src/main.py",
+  "scripts": {
+    "dev": "uvicorn src.main:app --reload",
+    "start": "uvicorn src.main:app --host 0.0.0.0 --port 3000",
+    "db:init": "alembic upgrade head"
+  },
+  "dependencies": {
+    "fastapi": "^0.109.0",
+    "uvicorn": "^0.27.0",
+    "sqlalchemy": "^2.0.25",
+    "psycopg2-binary": "^2.9.9",
+    "pydantic": "^2.5.3",
+    "pydantic-settings": "^2.1.0",
+    "python-jose": "^3.3.0",
+    "passlib": "^1.7.4",
+    "bcrypt": "^4.1.2",
+    "python-multipart": "^0.0.6",
+    "alembic": "^1.13.1"
+  },
+  "devDependencies": {
+    "alembic": "^1.13.1",
+    "python-dotenv": "^1.0.0"
+  }
+}
