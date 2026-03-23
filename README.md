@@ -12,7 +12,7 @@
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### One Command - Complete Project
 
@@ -29,7 +29,7 @@ That's it! The interactive CLI will guide you through:
 
 ---
 
-## 📦 Installation
+## Installation
 
 ### Using npx (Recommended)
 ```bash
@@ -44,7 +44,7 @@ uiforge create saas-modern my-app
 
 ---
 
-## 🎯 All Features
+## All Features
 
 ### Frontend Templates
 - **12 Design Styles**: glass, minimal, brutalism, enterprise, bento, neumorphism, flat, material, dark-minimal, tech-futurism, monochrome, swiss
@@ -71,7 +71,7 @@ uiforge create saas-modern my-app
 
 ---
 
-## 💻 Usage Examples
+## Usage Examples
 
 ### Interactive Mode (Recommended)
 ```bash
@@ -108,7 +108,7 @@ npx uiforge create saas my-app --style brutalism --git --install
 
 ---
 
-## 📋 CLI Commands
+## CLI Commands
 
 ### Main Commands
 
@@ -166,7 +166,7 @@ uiforge app --name my-app --database prisma --auth nextauth --push
 
 ---
 
-## 🎨 Design Styles
+## Design Styles
 
 | Style | Description | Best For |
 |-------|-------------|----------|
@@ -190,7 +190,7 @@ uiforge styles --docs
 
 ---
 
-## 📂 Templates
+## Templates
 
 ### Frontend Templates
 - `saas` - SaaS landing with pricing
@@ -212,7 +212,7 @@ uiforge styles --docs
 
 ---
 
-## 🗄️ Backend Generation
+## Backend Generation
 
 ### What's Generated (Full Code, Not Configs!)
 
@@ -253,7 +253,7 @@ tsconfig.json           # TypeScript config
 
 ---
 
-## 🔧 Development
+## Development
 
 ### Run Locally
 ```bash
@@ -266,7 +266,7 @@ npm run dev
 
 ---
 
-## 🤖 AI Setup
+## AI Setup
 
 ### Option 1: Ollama (Local - Free)
 ```bash
@@ -282,7 +282,7 @@ export GROQ_API_KEY=your-key
 
 ---
 
-## 📝 Project Structure
+## Project Structure
 
 ```
 ui-forge/
@@ -298,7 +298,7 @@ ui-forge/
 
 ---
 
-## ⚡ Quick Reference Card
+## Quick Reference Card
 
 ```bash
 # Interactive (recommended)
@@ -323,7 +323,7 @@ npx uiforge deploy --provider vercel
 
 ---
 
-## 🙏 Credits
+## Credits
 
 - [Next.js](https://nextjs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
@@ -335,5 +335,5 @@ npx uiforge deploy --provider vercel
 ---
 
 <p align="center">
-  Built with ❤️ by <a href="https://github.com/Manavarya09">Manav Arya Singh</a>
+  Built with  by <a href="https://github.com/Manavarya09">Manav Arya Singh</a>
 </p>
