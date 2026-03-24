@@ -1168,52 +1168,77 @@ export default function Navbar() {
     await ensureDir(path.join(projectPath, "src", "services"));
     await ensureDir(path.join(projectPath, "src", "utils"));
     await ensureDir(path.join(projectPath, "prisma"));
+    await ensureDir(path.join(projectPath, "drizzle"));
+    await ensureDir(path.join(projectPath, "src", "db"));
     await ensureDir(path.join(projectPath, "tests"));
+
+    const deps: Record<string, string> = {
+      express: "^4.18.2",
+      "express-rate-limit": "^7.1.5",
+      "express-validator": "^7.0.1",
+      cors: "^2.8.5",
+      helmet: "^7.1.0",
+      morgan: "^1.10.0",
+      dotenv: "^16.3.1",
+      jsonwebtoken: "^9.0.2",
+      bcryptjs: "^2.4.3",
+      "bcrypt": "^5.1.1",
+      "uuid": "^9.0.1",
+      zod: "^3.22.4",
+    };
+
+    const devDeps: Record<string, string> = {
+      typescript: "^5.3.3",
+      "@types/node": "^20.10.6",
+      "@types/express": "^4.17.21",
+      "@types/cors": "^2.8.17",
+      "@types/morgan": "^1.9.9",
+      "@types/jsonwebtoken": "^9.0.5",
+      "@types/bcryptjs": "^2.4.6",
+      "@types/uuid": "^9.0.7",
+      tsx: "^4.7.0",
+      jest: "^29.7.0",
+      "@types/jest": "^29.5.11",
+      "ts-jest": "^29.1.1",
+      eslint: "^8.56.0",
+      "typescript-eslint": "^6.18.1",
+    };
+
+    const scripts: Record<string, string> = {
+      dev: "tsx watch src/index.ts",
+      build: "tsc",
+      start: "node dist/index.js",
+      test: "jest",
+    };
+
+    if (database === 'prisma') {
+      scripts["db:generate"] = "prisma generate";
+      scripts["db:push"] = "prisma db push";
+      scripts["db:migrate"] = "prisma migrate dev";
+      devDeps["prisma"] = "^5.8.0";
+    }
+
+    if (database === 'drizzle') {
+      scripts["db:generate"] = "drizzle-kit generate";
+      scripts["db:push"] = "drizzle-kit push";
+      scripts["db:migrate"] = "drizzle-kit migrate";
+      deps["drizzle-orm"] = "^0.29.0";
+      deps["postgres"] = "^3.4.3";
+      devDeps["drizzle-kit"] = "^0.20.0";
+    }
+
+    if (auth === 'nextauth') {
+      deps["next-auth"] = "^4.24.5";
+      devDeps["@types/bcrypt"] = "^5.0.2";
+    }
 
     const packageJson = {
       name: projectName,
       version: "1.0.0",
       private: true,
-      scripts: {
-        dev: "tsx watch src/index.ts",
-        build: "tsc",
-        start: "node dist/index.js",
-        test: "jest",
-        "db:generate": "prisma generate",
-        "db:push": "prisma db push",
-        "db:migrate": "prisma migrate dev",
-      },
-      dependencies: {
-        express: "^4.18.2",
-        "express-rate-limit": "^7.1.5",
-        "express-validator": "^7.0.1",
-        cors: "^2.8.5",
-        helmet: "^7.1.0",
-        morgan: "^1.10.0",
-        dotenv: "^16.3.1",
-        jsonwebtoken: "^9.0.2",
-        bcryptjs: "^2.4.3",
-        "bcrypt": "^5.1.1",
-        "uuid": "^9.0.1",
-        zod: "^3.22.4",
-      },
-      devDependencies: {
-        typescript: "^5.3.3",
-        "@types/node": "^20.10.6",
-        "@types/express": "^4.17.21",
-        "@types/cors": "^2.8.17",
-        "@types/morgan": "^1.9.9",
-        "@types/jsonwebtoken": "^9.0.5",
-        "@types/bcryptjs": "^2.4.6",
-        "@types/uuid": "^9.0.7",
-        tsx: "^4.7.0",
-        prisma: "^5.8.0",
-        jest: "^29.7.0",
-        "@types/jest": "^29.5.11",
-        "ts-jest": "^29.1.1",
-        eslint: "^8.56.0",
-        "typescript-eslint": "^6.18.1",
-      },
+      scripts,
+      dependencies: deps,
+      devDependencies: devDeps,
     };
 
     await writeFile(
@@ -1864,6 +1889,245 @@ model Comment {
   author    User     @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
 }
+`
+      );
+    }
+
+    if (database === 'drizzle') {
+      await writeFile(
+        path.join(projectPath, "drizzle.config.ts"),
+        `import type { Config } from 'drizzle-kit';
+
+export default {
+  schema: './src/db/schema.ts',
+  out: './drizzle',
+  dialect: 'postgresql',
+  dbCredentials: {
+    url: process.env.DATABASE_URL || 'postgresql://localhost:5432/mydb',
+  },
+} satisfies Config;
+`
+      );
+
+      await writeFile(
+        path.join(projectPath, "src", "db", "index.ts"),
+        `import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import * as schema from './schema';
+
+const connectionString = process.env.DATABASE_URL || 'postgresql://localhost:5432/mydb';
+const client = postgres(connectionString);
+export const db = drizzle(client, { schema });
+
+export type DB = typeof db;
+`
+      );
+
+      await writeFile(
+        path.join(projectPath, "src", "db", "schema.ts"),
+        `import { pgTable, serial, varchar, timestamp, boolean, text, uuid } from 'drizzle-orm/pg-core';
+
+export const users = pgTable('users', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  password: varchar('password', { length: 255 }).notNull(),
+  name: varchar('name', { length: 255 }),
+  avatar: varchar('avatar', { length: 500 }),
+  bio: text('bio'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const posts = pgTable('posts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  title: varchar('title', { length: 255 }).notNull(),
+  content: text('content').notNull(),
+  published: boolean('published').default(false),
+  authorId: uuid('author_id').references(() => users.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const comments = pgTable('comments', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  content: text('content').notNull(),
+  postId: uuid('post_id').references(() => posts.id, { onDelete: 'cascade' }),
+  authorId: uuid('author_id').references(() => users.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+export type Post = typeof posts.$inferSelect;
+export type NewPost = typeof posts.$inferInsert;
+export type Comment = typeof comments.$inferSelect;
+export type NewComment = typeof comments.$inferInsert;
+`
+      );
+
+      await writeFile(
+        path.join(projectPath, "src", "db", "users.ts"),
+        `import { db } from './index';
+import { users, type NewUser } from './schema';
+import { eq } from 'drizzle-orm';
+
+export const userRepository = {
+  async findAll() {
+    return db.select().from(users);
+  },
+
+  async findById(id: string) {
+    const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+    return result[0];
+  },
+
+  async findByEmail(email: string) {
+    const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    return result[0];
+  },
+
+  async create(user: NewUser) {
+    return db.insert(users).values(user).returning();
+  },
+
+  async update(id: string, user: Partial<NewUser>) {
+    return db.update(users).set(user).where(eq(users.id, id)).returning();
+  },
+
+  async delete(id: string) {
+    return db.delete(users).where(eq(users.id, id));
+  },
+};
+`
+      );
+
+      await writeFile(
+        path.join(projectPath, "src", "db", "posts.ts"),
+        `import { db } from './index';
+import { posts, type NewPost } from './schema';
+import { eq, desc } from 'drizzle-orm';
+
+export const postRepository = {
+  async findAll(limit = 10, offset = 0) {
+    return db.select().from(posts).orderBy(desc(posts.createdAt)).limit(limit).offset(offset);
+  },
+
+  async findById(id: string) {
+    const result = await db.select().from(posts).where(eq(posts.id, id)).limit(1);
+    return result[0];
+  },
+
+  async findByAuthor(authorId: string) {
+    return db.select().from(posts).where(eq(posts.authorId, authorId)).orderBy(desc(posts.createdAt));
+  },
+
+  async create(post: NewPost) {
+    return db.insert(posts).values(post).returning();
+  },
+
+  async update(id: string, post: Partial<NewPost>) {
+    return db.update(posts).set(post).where(eq(posts.id, id)).returning();
+  },
+
+  async delete(id: string) {
+    return db.delete(posts).where(eq(posts.id, id));
+  },
+};
+`
+      );
+    }
+
+    if (auth === 'nextauth') {
+      await writeFile(
+        path.join(projectPath, "src", "auth", "config.ts"),
+        `import { NextAuthOptions } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import bcrypt from 'bcrypt';
+
+export const authOptions: NextAuthOptions = {
+  providers: [
+    CredentialsProvider({
+      name: 'Credentials',
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
+        
+        // In a real app, fetch user from database
+        // const user = await userRepository.findByEmail(credentials.email);
+        
+        // Demo: accept any user
+        return {
+          id: '1',
+          email: credentials.email,
+          name: credentials.email.split('@')[0],
+        };
+      }
+    })
+  ],
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  pages: {
+    signIn: '/auth/signin',
+    error: '/auth/error',
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        (session.user as Record<string, unknown>).id = token.id;
+      }
+      return session;
+    },
+  },
+};
+`
+      );
+
+      await writeFile(
+        path.join(projectPath, "src", "auth", "[...nextauth].ts"),
+        `import NextAuth from 'next-auth';
+import { authOptions } from './config';
+
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };
+`
+      );
+
+      await writeFile(
+        path.join(projectPath, "src", "routes", "auth.ts"),
+        `import { Router } from 'express';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../auth/config.js';
+
+const router = Router();
+
+router.get('/session', async (req, res) => {
+  try {
+    const session = await getServerSession(authOptions);
+    if (session) {
+      res.json({ status: 'success', data: session });
+    } else {
+      res.json({ status: 'error', message: 'No session found' });
+    }
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: 'Failed to get session' });
+  }
+});
+
+export { router as authRouter };
 `
       );
     }

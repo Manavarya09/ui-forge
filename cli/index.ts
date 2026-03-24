@@ -15,6 +15,7 @@ import { fileURLToPath } from "url";
 import { exec, spawn } from "child_process";
 import { promisify } from "util";
 import fs from "fs/promises";
+import { writeFile, ensureDir } from "../utils/fs.js";
 import { 
   UIForgeError, 
   TemplateNotFoundError, 
@@ -92,7 +93,7 @@ const showHelp = () => {
 program
   .name("uiforge")
   .description("Build production-grade UI systems and backends in seconds")
-  .version("1.4.0");
+  .version("1.6.0");
 
 program.on("--help", () => {
   showHelp();
@@ -991,6 +992,115 @@ program
     console.log();
     console.log(chalk.gray("  For now, create a new project and copy your custom code."));
     console.log();
+  });
+
+program
+  .command("init")
+  .description("Initialize UIForge in an existing Next.js project")
+  .option("-o, --output <dir>", "Project directory", ".")
+  .option("-s, --style <style>", "Design style to apply")
+  .option("-d, --dark", "Enable dark mode", false)
+  .option("--verbose", "Enable verbose output for debugging", false)
+  .action(async (options) => {
+    console.clear();
+    console.log(miniLogo);
+    console.log();
+
+    const projectPath = path.resolve(options.output);
+    const spinner = ora({ text: chalk.cyan("Initializing UIForge..."), spinner: "dots" }).start();
+
+    try {
+      const packageJsonPath = path.join(projectPath, "package.json");
+      const packageExists = await fs.access(packageJsonPath).then(() => true).catch(() => false);
+      
+      if (!packageExists) {
+        spinner.fail(chalk.red("No package.json found. Run this in a Next.js project directory."));
+        console.log();
+        console.log(chalk.gray("  To create a new project:"));
+        console.log(chalk.gray("    npx uiforge create my-app"));
+        console.log();
+        process.exit(1);
+      }
+
+      const componentsPath = path.join(projectPath, "components.json");
+      const hasShadcn = await fs.access(componentsPath).then(() => true).catch(() => false);
+      
+      if (!hasShadcn) {
+        await writeFile(
+          componentsPath,
+          JSON.stringify({
+            $schema: "https://ui.shadcn.com/schema.json",
+            style: "default",
+            rsc: true,
+            tsx: true,
+            tailwind: {
+              config: "tailwind.config.ts",
+              css: "app/globals.css",
+              baseColor: "slate",
+              cssVariables: true,
+            },
+            aliases: {
+              components: "@/components",
+              utils: "@/lib/utils",
+            },
+          }, null, 2)
+        );
+      }
+
+      const libUtilsPath = path.join(projectPath, "lib", "utils.ts");
+      await ensureDir(path.join(projectPath, "lib"));
+      await writeFile(
+        libUtilsPath,
+        `import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+`
+      );
+
+      if (options.style) {
+        const { designLanguageRegistry } = await import("../design-languages/registry.js");
+        const styleExists = await designLanguageRegistry.styleExists(options.style);
+        if (styleExists) {
+          const designLanguage = await designLanguageRegistry.getStyle(options.style);
+          if (designLanguage) {
+            const { generateStyleTailwindConfig, generateStyleCSSVariables } = designLanguageRegistry;
+            const tailwindPath = path.join(projectPath, "tailwind.config.ts");
+            const cssPath = path.join(projectPath, "app", "globals.css");
+            
+            await writeFile(tailwindPath, generateStyleTailwindConfig(designLanguage));
+            await writeFile(cssPath, generateStyleCSSVariables(designLanguage));
+          }
+        }
+      }
+
+      await writeFile(
+        path.join(projectPath, ".uiforgerc.json"),
+        JSON.stringify({
+          version: "1.0.0",
+          initializedAt: new Date().toISOString(),
+          style: options.style || null,
+          darkMode: options.dark,
+        }, null, 2)
+      );
+
+      spinner.succeed();
+      console.log();
+      console.log(chalk.green.bold("  ✓ UIForge initialized successfully!"));
+      console.log();
+      console.log(chalk.gray("  Next steps:"));
+      console.log(chalk.gray("    npx uiforge add hero"));
+      console.log(chalk.gray("    npx uiforge add features"));
+      console.log();
+    } catch (error) {
+      spinner.fail(chalk.red("Initialization failed"));
+      console.log();
+      console.log(chalk.red(`  Error: ${(error as Error).message}`));
+      console.log();
+      process.exit(1);
+    }
   });
 
 program

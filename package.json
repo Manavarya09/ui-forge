@@ -1,6 +1,6 @@
 {
   "name": "@manavarya0909/ui-forge-cli",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Generate production-grade UI systems and backends in seconds - Frontend with Next.js, Tailwind | Backend with Express, Database, Auth",
   "type": "module",
   "bin": {
